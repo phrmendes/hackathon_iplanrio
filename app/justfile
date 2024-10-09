@@ -1,0 +1,17 @@
+set positional-arguments
+
+# default just command
+@default:
+    just --list
+
+# run django server
+@serve:
+    uv run -- uvicorn licitacaorio.asgi:application
+
+# run dev server
+@serve-dev:
+    uv run -- uvicorn licitacaorio.asgi:application --reload
+
+# create new app
+@startapp app:
+    uv run -- python manage.py startapp {{ app }}

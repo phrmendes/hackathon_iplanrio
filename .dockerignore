@@ -1,0 +1,8 @@
+**/__pycache__
+**/.direnv
+**/.envrc
+**/.venv
+**/flake.lock
+**/flake.nix
+**/justfile
+**/README.md
