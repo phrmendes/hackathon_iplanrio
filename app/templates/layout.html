@@ -12,6 +12,9 @@
     <link rel="icon" type="image/x-icon" href="{% static 'media/favicon.ico' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% if htmx %}
+    <script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>
+    {% endif %}
   </head>
   <body>
     <nav>
@@ -58,7 +61,7 @@
           </a>
         </li>
         <li>
-          <a class="navbar-user" href="/user">
+          <a class="navbar-user" href="{% url 'users:update' %}">
             <span role="img" aria-label="user" title="Usuário">
               <img
                 src="{% static 'media/user-512.png' %}"

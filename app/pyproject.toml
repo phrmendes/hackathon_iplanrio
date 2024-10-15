@@ -21,6 +21,7 @@ useLibraryCodeForTypes = true
 venvPath = "."
 venv = ".venv"
 reportIncompatibleVariableOverride = false
+reportAttributeAccessIssue = false
 
 [tool.ruff]
 target-version = "py310"
