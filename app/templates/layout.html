@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
+    <link rel="icon" type="image/x-icon" href="{% static 'media/favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li>
+          <a class="navbar-brand" href="/">
+            <span role="img" aria-label="Home" title="Home">
+              <img
+                src="{% static 'media/logo_prefeitura_rio_119x60.png' %}"
+                alt="Logo da Prefeitura do Rio de Janeiro"
+                width="119"
+              >
+            </span>
+          </a>
+        </li>
+        <li>
+          {% if user.is_authenticated %}
+            <span>Logado como: {{ user.username }}</span>
+          {% endif %}
+        </li>
+      </ul>
+      <ul>
+        {% if user.is_authenticated %}
+        <li>
+          <a class="navbar-etp" href="/etp">
+            <span role="img" aria-label="etp" title="Estudo Técnico Preliminar">
+              <img
+                src="{% static 'media/etp-512.png' %}"
+                alt="Ícone de Estudo Técnico Preliminar"
+                width="40"
+              >
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="navbar-tr" href="/tr">
+            <span role="img" aria-label="tr" title="Termo de Referência">
+              <img
+                src="{% static 'media/tr-512.png' %}"
+                alt="Ícone de Termo de Referência"
+                width="40"
+              >
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="navbar-user" href="/user">
+            <span role="img" aria-label="user" title="Usuário">
+              <img
+                src="{% static 'media/user-512.png' %}"
+                alt="Ícone de Usuário"
+                width="40"
+              >
+            </span>
+          </a>
+        </li>
+        {% endif %}
+        {% if user.is_authenticated and user.is_superuser %}
+        <li>
+          <a class="navbar-admin" href="/admin">
+            <span role="img" aria-label="admin" title="admin">
+              <img
+                src="{% static 'media/admin-512.png' %}"
+                alt="Ícone de admin"
+                width="40"
+              >
+            </span>
+          </a>
+        </li>
+        {% endif %}
+        {% if not user.is_authenticated %}
+        <li>
+          <a class="navbar-create" href="{% url 'users:create' %}">
+            <span role="img" aria-label="create" title="create">
+              <img
+                src="{% static 'media/create-512.png' %}"
+                alt="Ícone de Create"
+                width="40"
+              >
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="navbar-login" href="{% url 'users:login' %}">
+            <span role="img" aria-label="login" title="Login">
+              <img
+                src="{% static 'media/login-512.png' %}"
+                alt="Ícone de Login"
+                width="40"
+              >
+            </span>
+          </a>
+        </li>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <li>
+          <a class="navbar-logout" href="{% url 'users:logout' %}">
+            <span role="img" aria-label="logout" title="logout">
+              <img
+                src="{% static 'media/logout-512.png' %}"
+                alt="Ícone de Logout"
+                width="40"
+              >
+            </span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    <main>
+      {% block content %}
+      {% endblock %}
+    </main>
+  </body>
+</html>
