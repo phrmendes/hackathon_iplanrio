@@ -6,10 +6,8 @@ RUN useradd -ms /bin/bash -u 1001 app && chown -R app:app /app
 
 USER app
 
-COPY ./app/pyproject.toml ./app/uv.lock /app/
+COPY . /app
 
 RUN uv sync --no-dev
 
-COPY ./app /app
-
-EXPOSE 8000
+EXPOSE 8002
