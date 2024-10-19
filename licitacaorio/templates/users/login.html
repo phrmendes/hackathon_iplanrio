@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Login</h1>
+    </center>
+    <br>
+    {% if messages %}
+        {% for message in messages %}
+            <header>
+                <strong>{{ message }}</strong>
+            </header>
+        {% endfor %}
+    {% endif %}
+    <br>
+    <form class="form-with-validation"
+          action="{% url 'users:login' %}"
+          method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <center>
+            <button>Login</button>
+        </center>
+    </form>
+{% endblock content %}

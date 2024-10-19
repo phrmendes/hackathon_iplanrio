@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+{% load static %}
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="keywords"
+              content="Rio de Janeiro, Prefeitura, IplanRio, Licitação">
+        <meta name="description" content="Site da plataforma Licitação.Rio">
+        <title>
+
+            {% block title %}
+            {% endblock title %}
+        </title>
+        <link rel="icon"
+              type="image/x-icon"
+              href="{% static 'media/favicon.ico' %}">
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        {% if htmx %}
+            <script src="https://unpkg.com/htmx.org@2.0.3"
+                    integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
+                    crossorigin="anonymous"></script>
+        {% endif %}
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li>
+                    <a class="navbar-brand" href="{% url 'home' %}">
+                        <span role="img" aria-label="Home" title="Home">
+                            <img src="{% static 'media/logo_prefeitura_rio_119x60.png' %}"
+                                 alt="Logo da Prefeitura do Rio de Janeiro"
+                                 height="30"
+                                 width="119">
+                        </span>
+                    </a>
+                </li>
+            </ul>
+            <ul>
+                {% if user.is_authenticated %}
+                    <li>
+                        <a class="navbar-etp"
+                           href="{% url 'etp:etp' %}"
+                           data-tooltip="Estudo técnico preliminar"
+                           data-placement="bottom">
+                            <span role="img" aria-label="etp" title="Estudo Técnico Preliminar">
+                                <img src="{% static 'media/etp-512.png' %}"
+                                     alt="Ícone de Estudo Técnico Preliminar"
+                                     height="30"
+                                     width="30">
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="navbar-tr"
+                           href="{% url 'tr:tr' %}"
+                           data-tooltip="Termo de referência"
+                           data-placement="bottom">
+                            <span role="img" aria-label="tr" title="Termo de Referência">
+                                <img src="{% static 'media/tr-512.png' %}"
+                                     alt="Ícone de Termo de Referência"
+                                     height="30"
+                                     width="30">
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="navbar-user"
+                           href="{% url 'users:update' %}"
+                           data-tooltip="Usuário"
+                           data-placement="bottom">
+                            <span role="img" aria-label="user" title="Usuário">
+                                <img src="{% static 'media/user-512.png' %}"
+                                     alt="Ícone de Usuário"
+                                     height="30"
+                                     width="30">
+                            </span>
+                        </a>
+                    </li>
+                    {% if user.is_superuser %}
+                        <li>
+                            <a class="navbar-admin"
+                               href="{% url 'admin:index' %}"
+                               data-tooltip="Admin"
+                               data-placement="bottom">
+                                <span role="img" aria-label="admin" title="admin">
+                                    <img src="{% static 'media/admin-512.png' %}"
+                                         alt="Ícone de admin"
+                                         height="30"
+                                         width="30">
+                                </span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li>
+                        <a class="navbar-logout"
+                           href="{% url 'users:logout' %}"
+                           data-tooltip="Logout"
+                           data-placement="bottom">
+                            <span role="img" aria-label="logout" title="logout">
+                                <img src="{% static 'media/logout-512.png' %}"
+                                     alt="Ícone de Logout"
+                                     height="30"
+                                     width="30">
+                            </span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a class="navbar-create"
+                           href="{% url 'users:create' %}"
+                           data-tooltip="Criar usuário"
+                           data-placement="bottom">
+                            <span role="img" aria-label="create" title="create">
+                                <img src="{% static 'media/create-512.png' %}"
+                                     alt="Ícone de Create"
+                                     height="30"
+                                     width="30">
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="navbar-login"
+                           href="{% url 'users:login' %}"
+                           data-tooltip="Login"
+                           data-placement="bottom">
+                            <span role="img" aria-label="login" title="Login">
+                                <img src="{% static 'media/login-512.png' %}"
+                                     alt="Ícone de Login"
+                                     height="30"
+                                     width="30">
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <main class="container">
+
+            {% block content %}
+            {% endblock content %}
+        </main>
+    </body>
+    <footer>
+        {% if user.is_authenticated %}
+            <span>
+                <center>
+                    Logado como: {{ user.username }}
+                </center>
+            </span>
+        {% endif %}
+    </footer>
+</html>

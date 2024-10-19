@@ -1,0 +1,13 @@
+.form-with-validation {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+nav {
+  padding-left: 13px;
+  padding-right: 13px;
+}
+
+body {
+  padding: 15px;
+}

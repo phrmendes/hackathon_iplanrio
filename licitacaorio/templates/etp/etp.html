@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Estudo técnico preliminar
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Criar estudo técnico preliminar</h1>
+    </center>
+    <hr>
+    <br>
+    <form class="form-with-validation"
+          id="main-form"
+          hx-post="{% url 'etp:etp' %}"
+          htmx-swap="#main-form">
+        {% csrf_token %}
+        {{ form }}
+        <center>
+            <button>Criar</button>
+        </center>
+    </form>
+{% endblock content %}
