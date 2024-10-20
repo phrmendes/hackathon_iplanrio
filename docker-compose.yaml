@@ -37,5 +37,33 @@ services:
         - action: rebuild
           path: ./app/pyproject.toml
 
+  web:
+    build: 
+      dockerfile: fastapi.Dockerfile
+    ports:
+      - 8001:8001
+    volumes:
+      - ./ollama/fastapi:/app
+
+    networks:
+      - ollama-net
+
+  ollama:
+    build: 
+      dockerfile: ollama.Dockerfile
+    ports:
+      - 11434:11434
+    volumes:
+      - ollama_answers:/ollama
+    networks:
+      - ollama-net
+    entrypoint: ["/usr/bin/bash", "/pull-llama3.sh"]
+
 volumes:
   postgres_data:
+  ollama_answers:
+    driver: local
+
+networks:
+  ollama-net:
+    driver: bridge
