@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "djmoney",
     "users",
     "etp",
+    "tr",
 ]
 
 MIDDLEWARE = [
