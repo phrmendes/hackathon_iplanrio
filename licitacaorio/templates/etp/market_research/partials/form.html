@@ -1,0 +1,12 @@
+{# vim: set ft=htmldjango #}
+<form class="form-with-validation"
+      hx-post="{% url 'etp:market_research_create' adm_process_id %}"
+      hx-target="#market-research-list"
+      hx-swap="beforeend"
+      hx-on::after-request="if(event.detail.successful) this.reset()">
+    {% csrf_token %}
+    <div class="grid">{{ form }}</div>
+    <center>
+        <input type="submit" class="button-add" value="Adicionar">
+    </center>
+</form>

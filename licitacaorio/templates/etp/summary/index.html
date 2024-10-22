@@ -1,0 +1,109 @@
+{# vim: set ft=htmldjango #}
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Estudo técnico preliminar - Resumo
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Resumo</h1>
+    </center>
+    <hr>
+    <br>
+    {% if adm_process %}
+        <h2>Processo administrativo</h2>
+        <table>
+            <tr>
+                <th>Secretaria ou orgão</th>
+                <th>Espécie documental</th>
+                <th>Ano</th>
+                <th>Número do documento</th>
+            </tr>
+            <tr>
+                <td>{{ adm_process.organization }}</td>
+                <td>{{ adm_process.document_type }}</td>
+                <td>{{ adm_process.year }}</td>
+                <td>{{ adm_process.document_number }}</td>
+            </tr>
+        </table>
+    {% endif %}
+    {% if etp %}
+        <h2>Estudo técnico preliminar</h2>
+        <table>
+            <tr>
+                <th>Área solicitante</th>
+                <th>Justificativa</th>
+            </tr>
+            <tr>
+                <td>{{ etp.requesting_area }}</td>
+                <td>{{ etp.justification }}</td>
+            </tr>
+        </table>
+    {% endif %}
+    {% if market_researches %}
+        <h2>Pesquisas de mercado</h2>
+        <table>
+            <tr>
+                <th>Produto</th>
+                <th>Solicitante</th>
+                <th>Data</th>
+                <th>Fonte</th>
+                <th>Preço unitário (R$)</th>
+            </tr>
+            {% for market_research in market_researches %}
+                <tr>
+                    <td>{{ market_research.product }}</td>
+                    <td>{{ market_research.requester }}</td>
+                    <td>{{ market_research.date }}</td>
+                    <td>{{ market_research.source }}</td>
+                    <td>{{ market_research.unit_price }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    {% if contracts_estimates %}
+        <h2>Estimativas para contratos</h2>
+        <table>
+            <tr>
+                <th>Descrição</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Fornecedor</th>
+                <th>Preço unitário (R$)</th>
+            </tr>
+            {% for contract_estimate in contracts_estimates %}
+                <tr>
+                    <td>{{ contract_estimate.description }}</td>
+                    <td>{{ contract_estimate.product }}</td>
+                    <td>{{ contract_estimate.quantity }}</td>
+                    <td>{{ contract_estimate.supplier }}</td>
+                    <td>{{ contract_estimate.unit_price }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    {% if installment %}
+        <h2>Parcelamento</h2>
+        <table>
+            <tr>
+                <th>Número de parcelas</th>
+                <th>Valor da parcela (R$)</th>
+                <th>Data de vencimento</th>
+                <th>Justificativa</th>
+            </tr>
+            <tr>
+                <td>{{ installment.number }}</td>
+                <td>{{ installment.value }}</td>
+                <td>{{ installment.due_date }}</td>
+                <td>{{ installment.justification }}</td>
+            </tr>
+        </table>
+    {% endif %}
+    <center>
+        <a href="{% url 'home' %}">
+            <button type="button">Início</button>
+        </a>
+    </center>
+{% endblock content %}

@@ -3,6 +3,7 @@ from django.contrib import admin
 from etp import models
 
 models = [
+    models.AdmProcess,
     models.ETP,
     models.MarketResearch,
     models.ContractEstimate,

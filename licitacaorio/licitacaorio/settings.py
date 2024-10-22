@@ -1,11 +1,13 @@
 from os import environ
 from pathlib import Path
 
+from djmoney.money import Currency
+
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-LANGUAGE_CODE = "pt-br"
+LANGUAGE_CODE = "pt-BR"
 MEDIA_URL = "media/"
 ROOT_URLCONF = "licitacaorio.urls"
 SECRET_KEY = environ["SECRET_KEY"]
@@ -16,6 +18,8 @@ TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_TZ = True
 WSGI_APPLICATION = "licitacaorio.wsgi.application"
+DEFAULT_CURRENCY = Currency("BRL")
+DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d %b %Y"]
 ALLOWED_EMAIL_DOMAINS = [
     "prefeitura.rio",
     "rio.rj.gov.br",
@@ -29,6 +33,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "djmoney",
     "users",
     "etp",
 ]

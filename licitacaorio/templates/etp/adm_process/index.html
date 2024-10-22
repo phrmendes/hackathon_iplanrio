@@ -6,18 +6,15 @@
 
 {% block content %}
     <center>
-        <h1>Criar estudo técnico preliminar</h1>
+        <h1>Cadastrar processo administrativo</h1>
     </center>
     <hr>
     <br>
     <form class="form-with-validation"
-          id="main-form"
-          hx-post="{% url 'etp:etp' %}"
-          htmx-swap="#main-form">
+          action="{% url 'etp:adm_process_index' %}"
+          method="post">
         {% csrf_token %}
         {{ form }}
-        <center>
-            <button>Criar</button>
-        </center>
+        <input type="submit" value="Próximo" />
     </form>
 {% endblock content %}

@@ -13,17 +13,17 @@ def validate_email_domain(email: str) -> None:
     raise ValidationError(msg)
 
 
-def validate_cnpj(cnpj: str) -> bool:
+def validate_cnpj(cnpj: str) -> None:
     """Validate CNPJ number."""
     cnpj = "".join(filter(str.isdigit, cnpj))
     cnpj_length = 14
 
     if len(cnpj) != cnpj_length:
-        msg = "CNPJ must have 14 digits."
+        msg = "CNPJ deve conter 14 dígitos."
         raise ValidationError(msg)
 
     if len(set(cnpj)) == 1:
-        msg = "Invalid CNPJ."
+        msg = "CNPJ inválido."
         raise ValidationError(msg)
 
     def calculate_digit(cnpj: str, weights: list[int]) -> int:
@@ -39,7 +39,5 @@ def validate_cnpj(cnpj: str) -> bool:
     check_digit_2 = calculate_digit(cnpj[:13], weights_2)
 
     if int(cnpj[12]) != check_digit_1 or int(cnpj[13]) != check_digit_2:
-        msg = "Invalid CNPJ."
+        msg = "CNPJ inválido."
         raise ValidationError(msg)
-
-    return True

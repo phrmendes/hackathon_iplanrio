@@ -1,0 +1,28 @@
+{# vim: set ft=htmldjango #}
+<tr id="market-research-{{ market_research.pk }}">
+    <td>
+        <center>{{ market_research.requester }}</center>
+    </td>
+    <td>
+        <center>{{ market_research.date }}</center>
+    </td>
+    <td>
+        <center>{{ market_research.source }}</center>
+    </td>
+    <td>
+        <center>{{ market_research.product }}</center>
+    </td>
+    <td>
+        <center>{{ market_research.unit_price }}</center>
+    </td>
+    <td>
+        <center>
+            <button class="button-remove"
+                    hx-delete="{% url 'etp:market_research_delete' market_research.pk %}"
+                    hx-trigger="click"
+                    hx-target="#market-research-{{ market_research.pk }}"
+                    hx-confirm="Deseja realmente deletar?"
+                    hx-swap="outerHTML">Remover</button>
+        </center>
+    </td>
+</tr>
