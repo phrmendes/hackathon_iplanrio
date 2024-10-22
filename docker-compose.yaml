@@ -17,16 +17,50 @@ services:
       start_period: 30s
       timeout: 10s
 
-  llama3.2:
-    image: ollama/ollama:latest
+  # licitacaorio:
+  #   build:
+  #     dockerfile: ./licitacaorio/Dockerfile
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
+  #   env_file:
+  #     - .env
+  #   command: bash -c "uv run --no-dev uvicorn licitacaorio.asgi:application --host 0.0.0.0 --port 8000 --reload"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   develop:
+  #     watch:
+  #       - action: sync
+  #         path: ./app
+  #         target: /app
+  #       - action: rebuild
+  #         path: ./app/pyproject.toml
+
+  fastapi:
+    build:
+      dockerfile: ./ollama/fastapi/Dockerfile
+    ports:
+      - 8002:8002
+    volumes:
+      - ./ollama/fastapi:/app
+
+    networks:
+      - ollama-net
+
+  ollama:
+    build:
+      dockerfile: ./ollama/Dockerfile
     restart: always
     ports:
       - 11434:11434
     env_file:
       - .env
-    command: bash -c "ollama run llama3.2:1b"
+    entrypoint: ["/usr/bin/bash", "/pull-llama3.sh"]
     volumes:
-      - ollama:/app/.ollama
+      - ollama_data:/ollama
+    networks:
+      - ollama-net
     healthcheck:
       test: ollama list || exit 1
       interval: 10s
@@ -34,48 +68,33 @@ services:
       start_period: 30s
       timeout: 10s
 
-  licitacaorio:
-    build:
-      dockerfile: ./licitacaorio/Dockerfile
-    restart: always
-    ports:
-      - 8000:8000
-    env_file:
-      - .env
-    command: bash -c "uv run --no-dev uvicorn licitacaorio.asgi:application --host 0.0.0.0 --port 8000 --reload"
-    depends_on:
-      db:
-        condition: service_healthy
-    develop:
-      watch:
-        - action: sync
-          path: ./app
-          target: /app
-        - action: rebuild
-          path: ./app/pyproject.toml
-
-  dashboard:
-    build:
-      dockerfile: ./dashboard/Dockerfile
-    restart: always
-    ports:
-      - 8001:8001
-    env_file:
-      - .env
-    command: bash -c "uv run --no-dev streamlit run app.py --server.port 8001"
-    depends_on:
-      db:
-        condition: service_healthy
-      llama3.2:
-        condition: service_healthy
-    develop:
-      watch:
-        - action: sync
-          path: ./app
-          target: /app
-        - action: rebuild
-          path: ./app/pyproject.toml
+#   dashboard:
+#     build:
+#       dockerfile: ./dashboard/Dockerfile
+#     restart: always
+#     ports:
+#       - 8001:8001
+#     env_file:
+#       - .env
+#     command: bash -c "uv run --no-dev streamlit run app.py --server.port 8001"
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#       llama3.2:
+#         condition: service_healthy
+#     develop:
+#       watch:
+#         - action: sync
+#           path: ./app
+#           target: /app
+#         - action: rebuild
+#           path: ./app/pyproject.toml
 
 volumes:
   postgres_data:
   ollama_data:
+
+
+networks:
+  ollama-net:
+    driver: bridge
