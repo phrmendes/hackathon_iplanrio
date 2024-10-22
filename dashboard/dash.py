@@ -1,133 +1,164 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
+import sqlite3
 
-# Configuração da página
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+
 st.set_page_config(
     page_title="LICITACAO.RIO",
     page_icon="📄",
     layout="wide",
 )
 
-# Função para carregar o CSS externo
-def carregar_css(caminho):
-    with open(caminho) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Carregar o CSS da pasta src
-carregar_css("src/styles.css")
+def load_css(path):
+    """Load external CSS"""
+    with open(path) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Título e descrição centralizados
-st.markdown('<div class="main-title">📊 Dashboard de Licitações da Prefeitura do Rio</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Este dashboard apresenta uma visão geral das licitações realizadas no Licitação.rio. Explore os gráficos e KPIs abaixo para insights rápidos.</div>', unsafe_allow_html=True)
 
-# Função para gerar dados fictícios
-def gerar_dados_ficticios():
-    np.random.seed(42)
-    orgaos = ['Prefeitura', 'Estado', 'Ministério', 'Autarquia', 'Empresa Pública']
-    status = ['Em andamento', 'Concluído', 'Cancelado']
-    categorias = ['Serviços', 'Obras', 'Equipamentos', 'Consultoria']
+load_css("src/styles.css")
 
-    dados = {
-        'ID Licitação': np.arange(1, 101),
-        'Órgão': np.random.choice(orgaos, 100),
-        'Categoria': np.random.choice(categorias, 100),
-        'Valor Estimado (R$)': np.round(np.random.uniform(50000, 1000000, 100), 2),
-        'Status': np.random.choice(status, 100),
-        'Data de Abertura': pd.date_range(start='2024-01-01', periods=100).to_list(),
-    }
-    return pd.DataFrame(dados)
 
-# Gerar os dados
-df = gerar_dados_ficticios()
+def load_data(query):
+    """Load data from SQLite database"""
+    conn = sqlite3.connect("data/db.sqlite3")
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df
 
-# KPIs estilizados
-col1, col2, col3 = st.columns(3)
+
+df_adm_process = load_data("SELECT * FROM etp_admprocess")
+df_market = load_data("SELECT * FROM etp_marketresearch")
+df_contract = load_data("SELECT * FROM etp_contractestimate")
+df_installment = load_data("SELECT * FROM etp_installment")
+
+# KPIs styled
 col1, col2, col3 = st.columns(3)
 
+# KPI 1: Licitations total
 with col1:
+    licitations_total = df_adm_process.shape[0]
     st.markdown(
         '<div class="kpi-box">'
-        '<h3>Total de Licitações</h3>'
-        '<h1 style="font-size: 48px; margin: 0;">' + f'{df["ID Licitação"].count()}' + '</h1>'
-        '</div>',
-        unsafe_allow_html=True
+        "<h3> Total de Licitações </h3>"
+        f'<h1 style="font-size: 48px; margin: 0;">{licitations_total}</h1>'
+        "</div>",
+        unsafe_allow_html=True,
     )
+
+# KPI 2: Estimated total value
+estimated_total_value = df_contract["unit_price"].mul(df_contract["quantity"]).sum()
+
+# Format the value as Brazilian currency
+formatted_value = (
+    f"R$ {estimated_total_value:,.2f}".replace(",", "X")
+    .replace(".", ",")
+    .replace("X", ".")
+)
 
 with col2:
     st.markdown(
         '<div class="kpi-box">'
-        '<h3>Valor Total Estimado (R$)</h3>'
-        '<h1 style="font-size: 48px; margin: 0;">' + f'R$ {df["Valor Estimado (R$)"].sum():,.2f}' + '</h1>'
-        '</div>',
-        unsafe_allow_html=True
+        "<h3> Valor Total Estimado (R$) </h3>"
+        f'<h1 style="font-size: 48px; margin: 0;">{formatted_value}</h1>'
+        "</div>",
+        unsafe_allow_html=True,
     )
 
+# #KPI 3: Licitations concluded
+# TODO: Como identificar licitações concluídas?
+# licitations_concluded = df_adm_process[sf_adm_process["document_type"] == "Concluído"].shape[0]
 with col3:
     st.markdown(
         '<div class="kpi-box">'
-        '<h3>Licitações Concluídas</h3>'
-        '<h1 style="font-size: 48px; margin: 0;">' + f'{df[df["Status"] == "Concluído"].shape[0]}' + '</h1>'
-        '</div>',
-        unsafe_allow_html=True
+        "<h3> Valor Total Estimado (R$) </h3>"
+        f'<h1 style="font-size: 48px; margin: 0;">{formatted_value}</h1>'
+        "</div>",
+        unsafe_allow_html=True,
     )
 
-st.markdown("<br><br>", unsafe_allow_html=True)
-
-# Gráfico de Distribuição por Órgão
-st.subheader("📊 Distribuição de Licitações por Órgão")
-df_orgaos = df['Órgão'].value_counts().reset_index()
-df_orgaos.columns = ['Órgão', 'Número de Licitações']
+# Distribution of organizations
+st.subheader("📊 Distribuição de Licitações por Organização")
+df_org = df_adm_process["organization"].value_counts().reset_index()
+df_org.columns = ["Organização", "Número de Licitações"]
 
 fig1 = px.bar(
-    df_orgaos,
-    x='Órgão', y='Número de Licitações',
-    labels={'Órgão': 'Órgão', 'Número de Licitações': 'Número de Licitações'},
-    title='Quantidade de Licitações por Órgão'
+    df_org,
+    x="Organização",
+    y="Número de Licitações",
+    title="Distribuição de Licitações por Organização",
 )
 st.plotly_chart(fig1, use_container_width=True)
 
-# Gráfico de Valores Estimados por Categoria
-st.subheader("💰 Valores Estimados por Categoria")
-fig2 = px.pie(
-    df, values='Valor Estimado (R$)', names='Categoria',
-    title='Distribuição do Valor Estimado por Categoria'
+
+# Search products and average price
+st.subheader("💰 Produtos Pesquisados e Valor Médio")
+fig2 = px.scatter(
+    df_market,
+    x="product",
+    y="unit_price",
+    size="unit_price",
+    color="unit_price_currency",
+    title="Produtos Pesquisados - Valor Médio",
 )
 st.plotly_chart(fig2, use_container_width=True)
 
-# Filtro por Status e Data
+
+# Filtered table by status and period
 st.subheader("📅 Filtro por Status e Período")
-status_selecionado = st.selectbox("Selecione o Status:", df['Status'].unique())
-data_inicial = st.date_input("Data Inicial", value=pd.to_datetime('2024-01-01'))
-data_final = st.date_input("Data Final", value=pd.to_datetime('2024-12-31'))
 
+status_options = ["Concluído", "Em andamento", "Cancelado"]
+selected_status = st.selectbox("Selecione o Status:", status_options)
 
+# Inputs of data
+start_data = st.date_input("Data Inicial", value=pd.to_datetime("2024-01-01").date())
+end_data = st.date_input("Data Final", value=pd.to_datetime("2024-12-31").date())
 
-# Garantir que a coluna 'Data de Abertura' está no formato datetime
-df['Data de Abertura'] = pd.to_datetime(df['Data de Abertura'])
+# data conversion
+start_data = pd.to_datetime(start_data)
+end_data = pd.to_datetime(end_data)
+df_adm_process["year"] = pd.to_datetime(df_adm_process["year"], format="%Y")
 
-# Converter as datas selecionadas pelo usuário para datetime
-data_inicial = pd.to_datetime(data_inicial)
-data_final = pd.to_datetime(data_final)
-
-df_filtrado = df[
-    (df['Status'] == status_selecionado) &
-    (df['Data de Abertura'] >= data_inicial) &
-    (df['Data de Abertura'] <= data_final)
+df_filtered = df_adm_process[
+    (df_adm_process["document_type"] == selected_status)
+    & (df_adm_process["year"] >= start_data)
+    & (df_adm_process["year"] <= end_data)
 ]
 
-# Mostrar tabela filtrada
-st.subheader("📋 Licitações Filtradas")
-st.dataframe(df_filtrado)
-
-# Gráfico de Evolução Temporal
-st.subheader("📈 Evolução Temporal das Licitações")
-fig3 = px.line(
-    df_filtrado, x='Data de Abertura', y='Valor Estimado (R$)',
-    title='Evolução do Valor Estimado ao Longo do Tempo'
+df_filtered = df_filtered.rename(
+    columns={
+        "id": "ID",
+        "user": "Usuário",
+        "document_number": "Número do Documento",
+        "document_type": "Tipo de Documento",
+        "user_id": "ID do Usuário",
+        "organization": "Organização",
+        "year": "Ano",
+    }
 )
+
+st.subheader("📋 Licitações Filtradas")
+st.dataframe(df_filtered)
+
+# Evolution of biddings
+df_grouped = (
+    df_filtered.groupby(df_filtered["Ano"].dt.to_period("M"))
+    .size()
+    .reset_index(name="Total")
+)
+df_grouped["Ano"] = df_grouped["Ano"].astype(str)
+
+fig3 = px.line(
+    df_grouped,
+    x="Ano",
+    y="Total",
+    title="Evolução das Licitações",
+    labels={"Ano": "Mês-Ano", "Total": "Total de Licitações"},
+)
+fig3.update_layout(xaxis_tickangle=-45)
 st.plotly_chart(fig3, use_container_width=True)
 
-# Rodapé estilizado
-st.markdown('<div class="footer">🚀 Desenvolvido por DADOS IPLAN</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="footer">🚀 Desenvolvido por DADOS IPLAN</div>', unsafe_allow_html=True
+)
