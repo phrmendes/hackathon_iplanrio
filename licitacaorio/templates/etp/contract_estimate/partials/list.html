@@ -1,0 +1,31 @@
+{# vim: set ft=htmldjango #}
+<tr id="contract-estimate-{{ contract_estimate.pk }}">
+    <td>
+        <center>{{ contract_estimate.cnpj }}</center>
+    </td>
+    <td>
+        <center>{{ contract_estimate.supplier }}</center>
+    </td>
+    <td>
+        <center>{{ contract_estimate.product }}</center>
+    </td>
+    <td>
+        <center>{{ contract_estimate.description }}</center>
+    </td>
+    <td>
+        <center>{{ contract_estimate.quantity }}</center>
+    </td>
+    <td>
+        <center>{{ contract_estimate.unit_price }}</center>
+    </td>
+    <td>
+        <center>
+            <button class="button-remove"
+                    hx-delete="{% url 'etp:contract_estimate_delete' contract_estimate.pk %}"
+                    hx-trigger="click"
+                    hx-target="#contract-estimate-{{ contract_estimate.pk }}"
+                    hx-confirm="Deseja realmente deletar?"
+                    hx-swap="outerHTML">Remover</button>
+        </center>
+    </td>
+</tr>

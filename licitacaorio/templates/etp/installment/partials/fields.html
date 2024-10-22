@@ -1,0 +1,30 @@
+{# vim: set ft=htmldjango #}
+{% if enable_installment %}
+    <div class="grid">
+        <label for="{{ form.number.id_for_label }}">
+            {{ form.number.label }}
+            {{ form.number }}
+        </label>
+        <label for="{{ form.value.id_for_label }}">
+            {{ form.value.label }}
+            {{ form.value }}
+        </label>
+        <label for="{{ form.due_date.id_for_label }}">
+            {{ form.due_date.label }}
+            {{ form.due_date }}
+        </label>
+    </div>
+    <label for="{{ form.justification.id_for_label }}">
+        {{ form.justification.label }}
+        {{ form.justification }}
+    </label>
+    <center>
+        <input class="button-add" type="submit" value="Salvar" />
+    </center>
+{% else %}
+    <center>
+        <a href="{% url 'etp:summary_index' adm_process_id %}">
+            <button type="button">Próximo</button>
+        </a>
+    </center>
+{% endif %}

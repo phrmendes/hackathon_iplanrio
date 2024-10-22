@@ -1,12 +1,28 @@
 from django.contrib.auth.models import User
 from django.db import models
+from djmoney.models.fields import MoneyField
+
+from licitacaorio.settings import DEFAULT_CURRENCY
+
+
+class AdmProcess(models.Model):
+    """Model definition for AdmProcess."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="adm_processes")
+    organization = models.CharField(max_length=3)
+    document_type = models.CharField(max_length=3)
+    year = models.IntegerField()
+    document_number = models.CharField(max_length=5)
+
+    def __str__(self) -> str:
+        """Unicode representation of AdmProcess."""
+        return f"AP(id={self.id}, process={self.organization}{self.document_type}{self.year}/{self.document_number})"
 
 
 class ETP(models.Model):
     """Model definition for ETP."""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    adm_process = models.CharField(max_length=100)
+    adm_process = models.OneToOneField(AdmProcess, on_delete=models.CASCADE, related_name="etp")
     justification = models.TextField()
     requesting_area = models.CharField(max_length=100)
 
@@ -18,12 +34,12 @@ class ETP(models.Model):
 class MarketResearch(models.Model):
     """Model definition for MarketResearch."""
 
-    etp = models.ForeignKey(ETP, on_delete=models.CASCADE, related_name="market_research")
+    adm_process = models.ForeignKey(AdmProcess, on_delete=models.CASCADE, related_name="market_research")
     product = models.CharField(max_length=100)
     requester = models.CharField(max_length=100)
     date = models.DateField()
     source = models.CharField(max_length=100)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    unit_price = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
 
     def __str__(self) -> str:
         """Unicode representation of MarketResearch."""
@@ -33,13 +49,13 @@ class MarketResearch(models.Model):
 class ContractEstimate(models.Model):
     """Model definition for ContractEstimate."""
 
-    etp = models.ForeignKey(ETP, on_delete=models.CASCADE, related_name="contracts_estimates")
-    cnpj = models.CharField(max_length=14)
-    description = models.TextField()
+    adm_process = models.ForeignKey(AdmProcess, on_delete=models.CASCADE, related_name="contracts_estimates")
+    cnpj = models.CharField(max_length=18)
+    description = models.CharField(max_length=100)
     product = models.CharField(max_length=100)
     quantity = models.IntegerField()
     supplier = models.CharField(max_length=100)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    unit_price = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
 
     def __str__(self) -> str:
         """Unicode representation of ContractEstimate."""
@@ -49,14 +65,18 @@ class ContractEstimate(models.Model):
 class Installment(models.Model):
     """Model definition for Installment."""
 
-    etp = models.OneToOneField(ETP, on_delete=models.CASCADE, related_name="installments")
-    due_date = models.DateField()
-    installment = models.BooleanField()
-    installment_number = models.IntegerField()
-    installment_value = models.IntegerField()
-    justification = models.TextField()
-    value = models.DecimalField(max_digits=10, decimal_places=2)
+    adm_process = models.OneToOneField(AdmProcess, on_delete=models.CASCADE, related_name="installments")
+    due_date = models.DateField(null=True, blank=True)
+    number = models.IntegerField(null=True, blank=True)
+    justification = models.TextField(blank=True)
+    value = MoneyField(
+        max_digits=10,
+        decimal_places=2,
+        default_currency=DEFAULT_CURRENCY,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self) -> str:
         """Unicode representation of Installment."""
-        return f"Installment(id={self.id}, value={self.value}, n={self.installment_number})"
+        return f"Installment(id={self.id}, value={self.value}, n={self.number})"

@@ -21,7 +21,7 @@
           action="{% url 'users:login' %}"
           method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form }}
         <center>
             <button>Login</button>
         </center>

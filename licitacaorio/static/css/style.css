@@ -1,13 +1,63 @@
-.form-with-validation {
-  margin: 0 auto;
-  max-width: 800px;
-}
-
+/* Layout */
 nav {
   padding-left: 13px;
   padding-right: 13px;
 }
 
 body {
-  padding: 15px;
+  padding: 10px;
+}
+
+/* Buttons */
+input.button-add,
+input.button-submit,
+input.button-remove,
+input.button-edit {
+  width: 30%;
+}
+
+.button-add {
+  background-color: var(--pico-color-jade-550);
+}
+
+.button-remove {
+  background-color: var(--pico-color-red-550);
+}
+
+.button-edit {
+  background-color: var(--pico-color-yellow-450);
+}
+
+/* Messages */
+.error-messages,
+.field-errors,
+.success-messages,
+.field-sucesses {
+  margin-bottom: 10px;
+}
+
+.error-messages,
+.field-errors {
+  color: var(--pico-color-red-550);
+}
+
+.success-messages,
+.field-sucesses {
+  color: var(--pico-color-jade-550);
+}
+
+.error,
+.success {
+  margin: 0;
+}
+
+#session-message {
+  padding-left: 1%;
+  font-size: 15px;
+}
+
+/* Conditional display for installment form */
+#additional_fields:empty + #button-container .button-submit,
+#additional_fields:not(:empty) + #button-container .resume-link {
+  display: none;
 }
