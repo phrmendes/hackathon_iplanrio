@@ -1,0 +1,75 @@
+{# vim: set ft=htmldjango #}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Processo administrativo</th>
+                <th>Objetivo</th>
+                <th>Local de prestação de serviço</th>
+                <th>Data agendada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tr in trs %}
+                <tr>
+                    <td>{{ tr.adm_process }}</td>
+                    <td>{{ tr.objective }}</td>
+                    <td>{{ tr.service_location }}</td>
+                    <td>{{ tr.scheduled_date }}</td>
+                    <td>
+                        <button class="action-button button-remove"
+                                hx-delete="{% url 'tr:delete' tr.id %}"
+                                hx-target="closest tr"
+                                hx-confirm="Tem certeza que deseja excluir este termo de referência?">Excluir</button>
+                    </td>
+                    <td>
+                        <a href="{% url 'tr:index' %}">
+                            <button class="action-button button-edit" type="button">Editar</button>
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">Nenhum termo de referência encontrado.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="pagination-container">
+    <nav class="pagination" aria-label="Navegação de páginas">
+        {% if trs.has_previous %}
+            <a href="#"
+               hx-get="{% url 'tr:list' %}?page=1"
+               hx-target="#tr-list"
+               aria-label="Primeira página">
+                <div aria-hidden="true">«</div>
+                Primeira
+            </a>
+            <a href="#"
+               hx-get="{% url 'tr:list' %}?page={{ trs.previous_page_number }}"
+               hx-target="#tr-list"
+               aria-label="Página anterior">Anterior</a>
+        {% else %}
+            <div class="disabled" aria-hidden="true">« Primeira</div>
+            <div class="disabled" aria-hidden="true">Anterior</div>
+        {% endif %}
+        <div class="current-page" aria-current="page">Página {{ trs.number }} de {{ trs.paginator.num_pages }}</div>
+        {% if trs.has_next %}
+            <a href="#"
+               hx-get="{% url 'tr:list' %}?page={{ trs.next_page_number }}"
+               hx-target="#tr-list"
+               aria-label="Próxima página">Próxima</a>
+            <a href="#"
+               hx-get="{% url 'tr:list' %}?page={{ trs.paginator.num_pages }}"
+               hx-target="#tr-list"
+               aria-label="Última página">
+                Última
+                <div aria-hidden="true">»</div>
+            </a>
+        {% else %}
+            <div class="disabled" aria-hidden="true">Próxima</div>
+            <div class="disabled" aria-hidden="true">Última »</div>
+        {% endif %}
+    </nav>
+</div>

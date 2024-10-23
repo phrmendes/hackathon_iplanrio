@@ -9,12 +9,19 @@
 {% block content %}
     <h1>Licitação.Rio</h1>
     {% if user.is_authenticated %}
-        <h2>Estudos técnicos preliminares</h2>
+        <div>
+            <h2>Estudos técnicos preliminares</h2>
+            <hr>
+            <div hx-get="{% url 'etp:list' %}" hx-trigger="load"></div>
+        </div>
+        <br>
         <hr>
-        <p>Listar todos os ETPs aqui</p>
-        <h2>Termos de referência</h2>
-        <hr>
-        <p>Listar todos os TRs aqui</p>
+        <br>
+        <div>
+            <h2>Termos de referência</h2>
+            <hr>
+            <div hx-get="{% url 'tr:list' %}" hx-trigger="load"></div>
+        </div>
     {% else %}
         <p>
             Para acessar o conteúdo, faça <a href="{% url 'users:login' %}">login</a> ou <a href="{% url 'users:create' %}">crie um usuário</a>.

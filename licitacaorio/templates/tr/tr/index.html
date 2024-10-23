@@ -1,3 +1,5 @@
+{# vim: set ft=htmldjango #}
+
 {% extends "layout.html" %}
 
 {% block title %}
@@ -6,15 +8,17 @@
 
 {% block content %}
     <center>
-        <h1>Cadastrar processo administrativo</h1>
+        <h1>Criar estudo técnico preliminar</h1>
     </center>
     <hr>
     <br>
     <form class="form-with-validation"
-          action="{% url 'etp:index' %}"
+          action="{% url 'tr:index' %}"
           method="post">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Próximo" />
+        <center>
+            <input class="button-submit" type="submit" value="Próximo" />
+        </center>
     </form>
 {% endblock content %}

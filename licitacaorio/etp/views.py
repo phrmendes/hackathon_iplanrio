@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_http_methods
@@ -27,6 +28,29 @@ def adm_process_index(request: HttpRequest) -> HttpResponse:
         return render(request, "etp/adm_process/index.html", {"form": form})
 
     return render(request, "etp/adm_process/index.html", {"form": forms.AdmProcess()})
+
+
+@login_required
+@require_GET
+def adm_process_list(request: HttpRequest) -> HttpResponse:
+    adm_process_list = models.AdmProcess.objects.all().order_by("-id")
+    paginator = Paginator(adm_process_list, 5)
+    page = request.GET.get("page", 1)
+    adm_processes = paginator.get_page(page)
+
+    return render(request, "etp/list.html", {"adm_processes": adm_processes})
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def adm_process_delete(request: HttpRequest, adm_process_id: int) -> HttpResponse:
+    try:
+        adm_process = get_object_or_404(models.AdmProcess, pk=adm_process_id)
+        adm_process.delete()
+
+        return render(request, "empty.html")
+    except models.AdmProcess.DoesNotExist:
+        return HttpResponse(status=404)
 
 
 @login_required
@@ -58,9 +82,8 @@ def market_research_index(request: HttpRequest, adm_process_id: int) -> HttpResp
     adm_process = get_object_or_404(models.AdmProcess, pk=adm_process_id)
     market_researches = models.MarketResearch.objects.filter(adm_process=adm_process)
 
-    context: Context = {
+    context = {
         "form": forms.MarketResearch(),
-        "htmx": True,
         "market_researches": market_researches,
         "adm_process_id": adm_process_id,
     }
@@ -71,8 +94,6 @@ def market_research_index(request: HttpRequest, adm_process_id: int) -> HttpResp
 @login_required
 @require_http_methods(["GET", "POST"])
 def market_research_create(request: HttpRequest, adm_process_id: int) -> HttpResponse:
-    context: Context = {"htmx": True}
-
     if request.method == "POST":
         form = forms.MarketResearch(request.POST)
 
@@ -83,16 +104,15 @@ def market_research_create(request: HttpRequest, adm_process_id: int) -> HttpRes
             market_research.adm_process = adm_process
             market_research.save()
 
-            context["market_research"] = market_research
+            context = {"market_research": market_research}
 
             return render(request, "etp/market_research/partials/list.html", context)
 
-        context["form"] = form
-        context["adm_process_id"] = adm_process_id
+        context = {"form": form, "adm_process_id": adm_process_id}
 
         return render(request, "etp/contract_estimate/partials/form.html", context)
 
-    context["form"] = forms.MarketResearch()
+    context = {"form": forms.MarketResearch()}
 
     return render(request, "etp/market_research/partials/form.html", context)
 
@@ -115,9 +135,8 @@ def contract_estimate_index(request: HttpRequest, adm_process_id: int) -> HttpRe
     adm_process = get_object_or_404(models.AdmProcess, pk=adm_process_id)
     contract_estimates = models.ContractEstimate.objects.filter(adm_process=adm_process)
 
-    context: Context = {
+    context = {
         "form": forms.ContractEstimate(),
-        "htmx": True,
         "contract_estimates": contract_estimates,
         "adm_process_id": adm_process_id,
     }
@@ -128,8 +147,6 @@ def contract_estimate_index(request: HttpRequest, adm_process_id: int) -> HttpRe
 @login_required
 @require_http_methods(["GET", "POST"])
 def contract_estimate_create(request: HttpRequest, adm_process_id: int) -> HttpResponse:
-    context: Context = {"htmx": True}
-
     if request.method == "POST":
         form = forms.ContractEstimate(request.POST)
 
@@ -140,16 +157,15 @@ def contract_estimate_create(request: HttpRequest, adm_process_id: int) -> HttpR
             contract_estimate.adm_process = adm_process
             contract_estimate.save()
 
-            context["contract_estimate"] = contract_estimate
+            context = {"contract_estimate": contract_estimate}
 
             return render(request, "etp/contract_estimate/partials/list.html", context)
 
-        context["form"] = form
-        context["adm_process_id"] = adm_process_id
+        context = {"form": form, "adm_process_id": adm_process_id}
 
         return render(request, "etp/contract_estimate/partials/form.html", context)
 
-    context["form"] = forms.ContractEstimate()
+    context = {"form": forms.ContractEstimate()}
 
     return render(request, "etp/contract_estimate/partials/form.html", context)
 
@@ -169,7 +185,7 @@ def contract_estimate_delete(request: HttpRequest, contract_estimate_id: int) ->
 @login_required
 @require_GET
 def installment_index(request: HttpRequest, adm_process_id: int) -> HttpResponse:
-    context: Context = {"form": forms.Installment(), "htmx": True, "adm_process_id": adm_process_id}
+    context = {"form": forms.Installment(), "adm_process_id": adm_process_id}
 
     return render(request, "etp/installment/index.html", context)
 
@@ -177,7 +193,7 @@ def installment_index(request: HttpRequest, adm_process_id: int) -> HttpResponse
 @login_required
 @require_http_methods(["GET", "POST"])
 def installment_fields(request: HttpRequest, adm_process_id: int) -> HttpResponse:
-    context: Context = {"htmx": True, "adm_process_id": adm_process_id}
+    context: Context = {"adm_process_id": adm_process_id}
 
     if request.method == "GET":
         context["enable_installment"] = request.GET.get("enable_installment") == "on"
@@ -198,7 +214,7 @@ def installment_fields(request: HttpRequest, adm_process_id: int) -> HttpRespons
 
 
 @login_required
-@require_http_methods(["GET", "POST"])
+@require_GET
 def summary_index(request: HttpRequest, adm_process_id: int) -> HttpResponse:
     adm_process = get_object_or_404(models.AdmProcess, pk=adm_process_id)
     etp = models.ETP.objects.filter(adm_process=adm_process).first()
@@ -206,7 +222,7 @@ def summary_index(request: HttpRequest, adm_process_id: int) -> HttpResponse:
     contracts_estimates = models.ContractEstimate.objects.filter(adm_process=adm_process)
     installment = models.Installment.objects.filter(adm_process=adm_process).first()
 
-    context: Context = {
+    context = {
         "adm_process_id": adm_process_id,
         "etp": etp,
         "adm_process": adm_process,

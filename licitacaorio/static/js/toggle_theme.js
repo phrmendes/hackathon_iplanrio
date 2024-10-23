@@ -12,15 +12,12 @@ function toggleTheme() {
       const newSrc = img.getAttribute(`data-icon-${newTheme}`);
       console.log("Switching image:", img.alt, "to", newSrc);
 
-      // Create a new Image object to check if the file exists
       const testImage = new Image();
       testImage.onload = function () {
         img.src = newSrc;
       };
       testImage.onerror = function () {
         console.error("Error loading image:", newSrc);
-        // Optionally, set a fallback image or keep the current one
-        // img.src = 'path/to/fallback/image.png';
       };
       testImage.src = newSrc;
     });
