@@ -36,38 +36,48 @@ df_installment = load_data("SELECT * FROM etp_installment")
 # KPIs styled
 col1, col2, col3 = st.columns(3)
 
-# KPI 1: Licitations total
+# KPI 1: ETP total
 with col1:
-    licitations_total = df_adm_process.shape[0]
+    etp_total = df_adm_process.shape[0]
     st.markdown(
         '<div class="kpi-box">'
-        "<h3> Total de Licitações </h3>"
-        f'<h1 style="font-size: 48px; margin: 0;">{licitations_total}</h1>'
+        "<h3> Total de Estudos Técnicos </h3>"
+        f'<h1 style="font-size: 48px; margin: 0;">{etp_total}</h1>'
         "</div>",
         unsafe_allow_html=True,
     )
 
-# KPI 2: Estimated total value
-estimated_total_value = df_contract["unit_price"].mul(df_contract["quantity"]).sum()
+# KPI 2: TR total
+# TODO: COMO IDENTIFICAR TRs?
+with col2:
+    tr_total = df_adm_process.shape[0]
+    st.markdown(
+        '<div class="kpi-box">'
+        "<h3> Total de Termos de Referência </h3>"
+        f'<h1 style="font-size: 48px; margin: 0;">{tr_total}</h1>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
+# with col2:
+#     st.markdown(
+#         '<div class="kpi-box">'
+#         "<h3> Valor Total Estimado (R$) </h3>"
+#         f'<h1 style="font-size: 48px; margin: 0;">{formatted_value}</h1>'
+#         "</div>",
+#         unsafe_allow_html=True,
+#     )
 
 # Format the value as Brazilian currency
+estimated_total_value = df_contract["unit_price"].mul(df_contract["quantity"]).sum()
 formatted_value = (
     f"R$ {estimated_total_value:,.2f}".replace(",", "X")
     .replace(".", ",")
     .replace("X", ".")
 )
-
-with col2:
-    st.markdown(
-        '<div class="kpi-box">'
-        "<h3> Valor Total Estimado (R$) </h3>"
-        f'<h1 style="font-size: 48px; margin: 0;">{formatted_value}</h1>'
-        "</div>",
-        unsafe_allow_html=True,
-    )
-
 # #KPI 3: Licitations concluded
-# TODO: Como identificar licitações concluídas?
+# TODO: Como identificar ETPS concluídas?
 # licitations_concluded = df_adm_process[sf_adm_process["document_type"] == "Concluído"].shape[0]
 with col3:
     st.markdown(
@@ -79,7 +89,7 @@ with col3:
     )
 
 # Distribution of organizations
-st.subheader("📊 Distribuição de Licitações por Organização")
+st.subheader("📊 Distribuição de Licitações por Setor")
 df_org = df_adm_process["organization"].value_counts().reset_index()
 df_org.columns = ["Organização", "Número de Licitações"]
 
@@ -138,7 +148,7 @@ df_filtered = df_filtered.rename(
     }
 )
 
-st.subheader("📋 Licitações Filtradas")
+st.subheader("📋 ETPS Filtradas")
 st.dataframe(df_filtered)
 
 # Evolution of biddings
@@ -153,7 +163,7 @@ fig3 = px.line(
     df_grouped,
     x="Ano",
     y="Total",
-    title="Evolução das Licitações",
+    title="Evolução dos ETP/TRs",
     labels={"Ano": "Mês-Ano", "Total": "Total de Licitações"},
 )
 fig3.update_layout(xaxis_tickangle=-45)
