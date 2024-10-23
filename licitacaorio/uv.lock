@@ -31,6 +31,7 @@ dependencies = [
 dev = [
     { name = "basedpyright" },
     { name = "django-extensions" },
+    { name = "django-stubs" },
     { name = "ipython" },
     { name = "pygraphviz" },
     { name = "ruff" },
@@ -51,6 +52,7 @@ requires-dist = [
 dev = [
     { name = "basedpyright", specifier = ">=1.18.3" },
     { name = "django-extensions", specifier = ">=3.2.3" },
+    { name = "django-stubs", specifier = ">=5.1.0" },
     { name = "ipython", specifier = ">=8.28.0" },
     { name = "pygraphviz", specifier = ">=1.14" },
     { name = "ruff", specifier = ">=0.6.9" },
@@ -167,6 +169,35 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/98/8c/a1f63e1b94f477d6f28b890c15f5352f9ecd6861e60d7e7dd4b8a6f88634/django_money-3.5.3.tar.gz", hash = "sha256:cb8ef1adea8c682b792cc565ace45ace9525de26e3b116290951cd78c7393eab", size = 42264 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/32/05/5712bb009945cb8e15ca340598707782b48db65bdffc57e042a0dce19914/django_money-3.5.3-py3-none-any.whl", hash = "sha256:3020c0f6b77eb4c30bdd711c7c660af67ed4b7a4750fdbdf5894788848dc6fc6", size = 35917 },
+]
+
+[[package]]
+name = "django-stubs"
+version = "5.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asgiref" },
+    { name = "django" },
+    { name = "django-stubs-ext" },
+    { name = "types-pyyaml" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/47/35/fa62c35c48e77bc4dabfe56d16786a2e9965ff89c4c55ab909c2d9f00ce8/django_stubs-5.1.0.tar.gz", hash = "sha256:86128c228b65e6c9a85e5dc56eb1c6f41125917dae0e21e6cfecdf1b27e630c5", size = 265839 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1c/d8/4561cf32a652f12d1f6edf27ac1ed6194540b44592cc85ead62a1f6fdff6/django_stubs-5.1.0-py3-none-any.whl", hash = "sha256:b98d49a80aa4adf1433a97407102d068de26c739c405431d93faad96dd282c40", size = 470607 },
+]
+
+[[package]]
+name = "django-stubs-ext"
+version = "5.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/60/a5/dfb120bf3ce1f0da109481605f704ffe72533f056f42e8cffd5a486504a7/django_stubs_ext-5.1.0.tar.gz", hash = "sha256:ed7d51c0b731651879fc75f331fb0806d98b67bfab464e96e2724db6b46ef926", size = 9491 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/eb/03/20a5a19d1b8d26eddd8420261304ee9e6accd802f5332e360daaa2202afb/django_stubs_ext-5.1.0-py3-none-any.whl", hash = "sha256:a455fc222c90b30b29ad8c53319559f5b54a99b4197205ddbb385aede03b395d", size = 8966 },
 ]
 
 [[package]]
@@ -569,6 +600,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/eb/79/72064e6a701c2183016abbbfedaba506d81e30e232a68c9f0d6f6fcd1574/traitlets-5.14.3.tar.gz", hash = "sha256:9ed0579d3502c94b4b3732ac120375cda96f923114522847de4b3bb98b96b6b7", size = 161621 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/00/c0/8f5d070730d7836adc9c9b6408dec68c6ced86b304a9b26a14df072a6e8c/traitlets-5.14.3-py3-none-any.whl", hash = "sha256:b74e89e397b1ed28cc831db7aea759ba6640cb3de13090ca145426688ff1ac4f", size = 85359 },
+]
+
+[[package]]
+name = "types-pyyaml"
+version = "6.0.12.20240917"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/92/7d/a95df0a11f95c8f48d7683f03e4aed1a2c0fc73e9de15cca4d38034bea1a/types-PyYAML-6.0.12.20240917.tar.gz", hash = "sha256:d1405a86f9576682234ef83bcb4e6fff7c9305c8b1fbad5e0bcd4f7dbdc9c587", size = 12381 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/2c/c1d81d680997d24b0542aa336f0a65bd7835e5224b7670f33a7d617da379/types_PyYAML-6.0.12.20240917-py3-none-any.whl", hash = "sha256:392b267f1c0fe6022952462bf5d6523f31e37f6cea49b14cee7ad634b6301570", size = 15264 },
 ]
 
 [[package]]

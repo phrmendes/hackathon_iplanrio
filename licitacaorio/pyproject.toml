@@ -17,6 +17,7 @@ dependencies = [
 dev-dependencies = [
     "basedpyright>=1.18.3",
     "django-extensions>=3.2.3",
+    "django-stubs>=5.1.0",
     "ipython>=8.28.0",
     "pygraphviz>=1.14",
     "ruff>=0.6.9",
