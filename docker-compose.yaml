@@ -17,10 +17,8 @@ services:
     build:
       dockerfile: ./ollama/ollama.Dockerfile
     restart: always
-    ports:
-      - 11434:11434
     volumes:
-      - ollama:/ollama
+      - ollama:/root/.ollama
     networks:
       - ollama
 
@@ -34,6 +32,13 @@ services:
       - app
     depends_on:
       - ollama
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./ollama/app.py
+          target: /app
+        - action: rebuild
+          path: ./ollama/pyproject.toml
 
   licitacaorio:
     build:
@@ -50,6 +55,13 @@ services:
       - ollama
       - ollama-api
       # - dashboard
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./licitacaorio
+          target: /app
+        - action: rebuild
+          path: ./licitacaorio/pyproject.toml
 
   nginx:
     build:
@@ -62,6 +74,11 @@ services:
       - app
     volumes:
       - static:/app/assets
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./nginx/nginx.conf
+          target: /etc/nginx/nginx.conf.d
 
 volumes:
   postgres:
