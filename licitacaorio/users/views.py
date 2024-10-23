@@ -32,8 +32,10 @@ def login(request: HttpRequest) -> HttpResponse:
             username = form.get_user()
             auth.login(request, username)
             return redirect("home")
-    else:
-        form = AuthenticationForm()
+
+        return render(request, "users/login.html", {"form": form})
+
+    form = AuthenticationForm()
 
     return render(request, "users/login.html", {"form": form})
 
@@ -56,8 +58,10 @@ def update(request: HttpRequest) -> HttpResponse:
             auth.update_session_auth_hash(request, form.user)
             request.session["came_from_update"] = True
             return redirect("users:success")
-    else:
-        form = PasswordChangeForm(request.user)
+
+        return render(request, "users/update.html", {"form": form})
+
+    form = PasswordChangeForm(request.user)
 
     return render(request, "users/update.html", {"form": form})
 
