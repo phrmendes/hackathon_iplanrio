@@ -3,10 +3,14 @@ from pathlib import Path
 
 from djmoney.money import Currency
 
+ALLOWED_EMAIL_DOMAINS = ["prefeitura.rio", "rio.rj.gov.br"]
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEBUG = True
+DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d %b %Y"]
+DEBUG = environ.get("DEBUG", "1") == "1"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_CURRENCY = Currency("BRL")
+GRAPH_MODELS = {"app_labels": ["etp", "tr"]}
 LANGUAGE_CODE = "pt-BR"
 MEDIA_URL = "media/"
 ROOT_URLCONF = "licitacaorio.urls"
@@ -18,12 +22,6 @@ TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_TZ = True
 WSGI_APPLICATION = "licitacaorio.wsgi.application"
-DEFAULT_CURRENCY = Currency("BRL")
-DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d %b %Y"]
-ALLOWED_EMAIL_DOMAINS = [
-    "prefeitura.rio",
-    "rio.rj.gov.br",
-]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -69,34 +67,18 @@ TEMPLATES = [
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    },
-    "postgres": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": environ["DB_NAME"],
-        "USER": environ["DB_USER"],
-        "PASSWORD": environ["DB_PASSWORD"],
-        "HOST": environ["DB_HOST"],
-        "PORT": environ["DB_PORT"],
+        "ENGINE": environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": environ.get("DB_NAME", BASE_DIR / "db.sqlite3"),
+        "USER": environ.get("DB_USER", "user"),
+        "PASSWORD": environ.get("DB_PASSWORD", "password"),
+        "HOST": environ.get("DB_HOST", "localhost"),
+        "PORT": environ.get("DB_PORT", "5432"),
     },
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
-GRAPH_MODELS = {
-    "app_labels": ["etp"],
-}

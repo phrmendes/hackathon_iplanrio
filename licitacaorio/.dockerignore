@@ -1,9 +1,0 @@
-**/__pycache__
-**/.ruff_cache
-**/.direnv
-**/.envrc
-**/.venv
-**/README.md
-**/db.sqlite3
-**/flake.lock
-**/flake.nix

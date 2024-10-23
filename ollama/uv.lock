@@ -273,7 +273,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.2" },
-    { name = "ollama", virtual = "." },
+    { name = "ollama" },
     { name = "uvicorn", specifier = ">=0.32.0" },
 ]
 
