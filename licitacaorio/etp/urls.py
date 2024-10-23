@@ -8,7 +8,17 @@ urlpatterns = [
     path(
         "",
         views.adm_process_index,
-        name="adm_process_index",
+        name="index",
+    ),
+    path(
+        "list/",
+        views.adm_process_list,
+        name="list",
+    ),
+    path(
+        "<int:adm_process_id>/delete/",
+        views.adm_process_delete,
+        name="delete",
     ),
     path(
         "<int:adm_process_id>/",
@@ -26,7 +36,7 @@ urlpatterns = [
         name="market_research_create",
     ),
     path(
-        "<int:market_research_id>/market_research/delete/",
+        "market_research/delete/<int:market_research_id>/",
         views.market_research_delete,
         name="market_research_delete",
     ),
@@ -41,7 +51,7 @@ urlpatterns = [
         name="contract_estimate_create",
     ),
     path(
-        "<int:contract_estimate_id>/contract_estimate/delete/",
+        "contract_estimate/delete/<int:contract_estimate_id>/",
         views.contract_estimate_delete,
         name="contract_estimate_delete",
     ),

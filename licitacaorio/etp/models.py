@@ -11,12 +11,12 @@ class AdmProcess(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="adm_processes")
     organization = models.CharField(max_length=3)
     document_type = models.CharField(max_length=3)
-    year = models.IntegerField()
+    year = models.PositiveIntegerField()
     document_number = models.CharField(max_length=5)
 
     def __str__(self) -> str:
         """Unicode representation of AdmProcess."""
-        return f"AP(id={self.id}, process={self.organization}{self.document_type}{self.year}/{self.document_number})"
+        return f"{self.organization}{self.document_type}{self.year}/{self.document_number}"
 
 
 class ETP(models.Model):
@@ -53,7 +53,7 @@ class ContractEstimate(models.Model):
     cnpj = models.CharField(max_length=18)
     description = models.CharField(max_length=100)
     product = models.CharField(max_length=100)
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     supplier = models.CharField(max_length=100)
     unit_price = MoneyField(max_digits=10, decimal_places=2, default_currency=DEFAULT_CURRENCY)
 
@@ -67,7 +67,7 @@ class Installment(models.Model):
 
     adm_process = models.OneToOneField(AdmProcess, on_delete=models.CASCADE, related_name="installments")
     due_date = models.DateField(null=True, blank=True)
-    number = models.IntegerField(null=True, blank=True)
+    number = models.PositiveIntegerField(null=True, blank=True)
     justification = models.TextField(blank=True)
     value = MoneyField(
         max_digits=10,
