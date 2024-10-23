@@ -9,92 +9,67 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: CMD-SHELL pg_isready -U ${DB_USER}
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
-
-  # licitacaorio:
-  #   build:
-  #     dockerfile: ./licitacaorio/Dockerfile
-  #   restart: always
-  #   ports:
-  #     - 8000:8000
-  #   env_file:
-  #     - .env
-  #   command: bash -c "uv run --no-dev uvicorn licitacaorio.asgi:application --host 0.0.0.0 --port 8000 --reload"
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   develop:
-  #     watch:
-  #       - action: sync
-  #         path: ./app
-  #         target: /app
-  #       - action: rebuild
-  #         path: ./app/pyproject.toml
-
-  fastapi:
-    build:
-      dockerfile: ./ollama/fastapi/Dockerfile
-    ports:
-      - 8002:8002
-    volumes:
-      - ./ollama/fastapi:/app
-
+      - postgres:/var/lib/postgresql/data
     networks:
-      - ollama-net
+      - app
 
   ollama:
     build:
-      dockerfile: ./ollama/Dockerfile
+      dockerfile: ./ollama/ollama.Dockerfile
     restart: always
     ports:
       - 11434:11434
-    env_file:
-      - .env
-    entrypoint: ["/usr/bin/bash", "/pull-llama3.sh"]
     volumes:
-      - ollama_data:/ollama
+      - ollama:/ollama
     networks:
-      - ollama-net
-    healthcheck:
-      test: ollama list || exit 1
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
+      - ollama
 
-#   dashboard:
-#     build:
-#       dockerfile: ./dashboard/Dockerfile
-#     restart: always
-#     ports:
-#       - 8001:8001
-#     env_file:
-#       - .env
-#     command: bash -c "uv run --no-dev streamlit run app.py --server.port 8001"
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#       llama3.2:
-#         condition: service_healthy
-#     develop:
-#       watch:
-#         - action: sync
-#           path: ./app
-#           target: /app
-#         - action: rebuild
-#           path: ./app/pyproject.toml
+  ollama-api:
+    build:
+      dockerfile: ./ollama/app.Dockerfile
+    ports:
+      - 8001:8001
+    networks:
+      - ollama
+      - app
+    depends_on:
+      - ollama
+
+  licitacaorio:
+    build:
+      dockerfile: ./licitacaorio/Dockerfile
+      args:
+        SECRET_KEY: ${SECRET_KEY}
+    env_file: .env
+    networks:
+      - app
+    volumes:
+      - static:/app/assets
+    depends_on:
+      - db
+      - ollama
+      - ollama-api
+      # - dashboard
+
+  nginx:
+    build:
+      dockerfile: ./nginx/Dockerfile
+    ports:
+      - 1337:80
+    depends_on:
+      - licitacaorio
+    networks:
+      - app
+    volumes:
+      - static:/app/assets
 
 volumes:
-  postgres_data:
-  ollama_data:
-
+  postgres:
+  ollama:
+  static:
 
 networks:
-  ollama-net:
+  app:
+    driver: bridge
+  ollama:
     driver: bridge
