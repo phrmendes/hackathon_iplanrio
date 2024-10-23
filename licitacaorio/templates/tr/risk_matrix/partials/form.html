@@ -1,0 +1,12 @@
+{# vim: set ft=htmldjango #}
+<form class="form-with-validation"
+      hx-post="{% url 'tr:risk_matrix_create' tr_id %}"
+      hx-target="#risk-matrix-list"
+      hx-swap="beforeend"
+      hx-on::after-request="if(event.detail.successful) this.reset()">
+    {% csrf_token %}
+    <div class="grid">{{ form }}</div>
+    <center>
+        <input type="submit" class="button-add" value="Adicionar">
+    </center>
+</form>

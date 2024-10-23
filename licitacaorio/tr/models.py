@@ -21,17 +21,22 @@ class TR(models.Model):
 class RiskMatrix(models.Model):
     """Model definition for RiskMatrix."""
 
-    tr = models.OneToOneField(TR, on_delete=models.CASCADE, related_name="risk_matrix")
+    tr = models.ForeignKey(TR, on_delete=models.CASCADE, related_name="risk_matrix")
     type = models.CharField(max_length=100)
     risk = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
     subcategory = models.CharField(max_length=100, blank=True)
-    probability = models.CharField(max_length=100)
-    impact = models.CharField(max_length=100)
+    probability = models.PositiveIntegerField()
+    impact = models.PositiveIntegerField()
     strategy = models.CharField(max_length=100)
-    mitigation = models.TextField()
+    mitigation = models.CharField(max_length=100)
     in_charge = models.CharField(max_length=100)
 
     def __str__(self) -> str:
         """Unicode representation of RiskMatrix."""
         return f"RM(id={self.id}, tr={self.tr})"
+
+    @property
+    def probability_times_impact(self) -> int:
+        """Calculate the probability times impact."""
+        return self.probability * self.impact

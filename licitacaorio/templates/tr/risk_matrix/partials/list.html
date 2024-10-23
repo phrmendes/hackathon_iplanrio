@@ -1,0 +1,43 @@
+{# vim: set ft=htmldjango #}
+<tr id="risk-matrix-{{ row.pk }}">
+    <td>
+        <center>{{ row.type }}</center>
+    </td>
+    <td>
+        <center>{{ row.risk }}</center>
+    </td>
+    <td>
+        <center>{{ row.category }}</center>
+    </td>
+    <td>
+        <center>{{ row.subcategory }}</center>
+    </td>
+    <td>
+        <center>{{ row.probability }}</center>
+    </td>
+    <td>
+        <center>{{ row.impact }}</center>
+    </td>
+    <td>
+        <center>{{ row.probability_times_impact }}</center>
+    </td>
+    <td>
+        <center>{{ row.strategy }}</center>
+    </td>
+    <td>
+        <center>{{ row.mitigation }}</center>
+    </td>
+    <td>
+        <center>{{ row.in_charge }}</center>
+    </td>
+    <td>
+        <center>
+            <button class="button-remove"
+                    hx-delete="{% url 'tr:risk_matrix_delete' row.pk %}"
+                    hx-trigger="click"
+                    hx-target="#risk-matrix-{{ row.pk }}"
+                    hx-confirm="Deseja realmente deletar?"
+                    hx-swap="outerHTML">Remover</button>
+        </center>
+    </td>
+</tr>

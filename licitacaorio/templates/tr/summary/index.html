@@ -1,0 +1,72 @@
+{# vim: set ft=htmldjango #}
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Tr - Resumo
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Resumo</h1>
+    </center>
+    <hr>
+    <br>
+    {% if tr %}
+        <h2>Termo de referência</h2>
+        <table>
+            <tr>
+                <th>Processo administrativo</th>
+                <th>Objetivo</th>
+                <th>Justificativa</th>
+                <th>Descrição</th>
+                <th>Local de prestação do serviço</th>
+                <th>Data prevista</th>
+            </tr>
+            <tr>
+                <td>{{ tr.adm_process }}</td>
+                <td>{{ tr.objective }}</td>
+                <td>{{ tr.justification }}</td>
+                <td>{{ tr.descriprion }}</td>
+                <td>{{ tr.service_location }}</td>
+                <td>{{ tr.scheduled_date }}</td>
+            </tr>
+        </table>
+    {% endif %}
+    {% if risk_matrix %}
+        <h2>Matriz de riscos</h2>
+        <table>
+            <tr>
+                <th>Tipo</th>
+                <th>Risco</th>
+                <th>Categoria</th>
+                <th>Subcategoria</th>
+                <th>Probabilidade</th>
+                <th>Impacto</th>
+                <th>P×I</th>
+                <th>Estratégia</th>
+                <th>Mitigação</th>
+                <th>Responsável</th>
+            </tr>
+            {% for row in risk_matrix %}
+                <tr>
+                    <td>{{ row.type }}</td>
+                    <td>{{ row.risk }}</td>
+                    <td>{{ row.category }}</td>
+                    <td>{{ row.subcategory }}</td>
+                    <td>{{ row.probability }}</td>
+                    <td>{{ row.impact }}</td>
+                    <td>{{ row.probability_times_impact }}</td>
+                    <td>{{ row.strategy }}</td>
+                    <td>{{ row.mitigation }}</td>
+                    <td>{{ row.in_charge }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <center>
+        <a href="{% url 'home' %}">
+            <button type="button">Início</button>
+        </a>
+    </center>
+{% endblock content %}

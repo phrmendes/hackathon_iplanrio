@@ -1,0 +1,24 @@
+{# vim: set ft=htmldjango #}
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Estudo técnico preliminar
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Criar estudo técnico preliminar</h1>
+    </center>
+    <hr>
+    <br>
+    <form class="form-with-validation"
+          action="{% url 'tr:index' %}"
+          method="post">
+        {% csrf_token %}
+        {{ form }}
+        <center>
+            <input class="button-submit" type="submit" value="Próximo" />
+        </center>
+    </form>
+{% endblock content %}
