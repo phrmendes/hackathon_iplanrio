@@ -25,13 +25,11 @@
               href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
         <script src="{% static 'js/toggle_theme.js' %}"></script>
-        {% if htmx %}
-            <script src="https://unpkg.com/htmx.org@2.0.3"
-                    integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
-                    crossorigin="anonymous"></script>
-        {% endif %}
+        <script src="https://unpkg.com/htmx.org@2.0.3"
+                integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
+                crossorigin="anonymous"></script>
     </head>
-    <body {% if htmx %}hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'{% endif %}>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <nav>
             <ul>
                 <li>
@@ -63,9 +61,22 @@
                 {% if user.is_authenticated %}
                     <li>
                         <button class="outline secondary"
+                                data-tooltip="Dashboard"
+                                data-placement="bottom">
+                            <a href="https://dashboard">
+                                <img data-icon-light="{% static 'media/dashboard-dark.png' %}"
+                                     data-icon-dark="{% static 'media/dashboard-light.png' %}"
+                                     alt="Ícone de Dashboard"
+                                     height="30"
+                                     width="30">
+                            </a>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="outline secondary"
                                 data-tooltip="Novo estudo técnico preliminar"
                                 data-placement="bottom">
-                            <a href="{% url 'etp:adm_process_index' %}">
+                            <a href="{% url 'etp:index' %}">
                                 <img data-icon-light="{% static 'media/etp-dark.png' %}"
                                      data-icon-dark="{% static 'media/etp-light.png' %}"
                                      alt="Ícone de Estudo Técnico Preliminar"
