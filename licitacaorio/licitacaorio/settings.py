@@ -4,8 +4,9 @@ from pathlib import Path
 from djmoney.money import Currency
 
 ALLOWED_EMAIL_DOMAINS = ["prefeitura.rio", "rio.rj.gov.br"]
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 BASE_DIR = Path(__file__).resolve().parent.parent
+DASHBOARD_URL = environ.get("DASHBOARD_URL", "http://localhost:8002")
 DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d %b %Y"]
 DEBUG = environ.get("DEBUG", "1") == "1"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -13,11 +14,12 @@ DEFAULT_CURRENCY = Currency("BRL")
 GRAPH_MODELS = {"app_labels": ["etp", "tr"]}
 LANGUAGE_CODE = "pt-BR"
 MEDIA_URL = "media/"
+OLLAMA_API_URL = environ.get("OLLAMA_API_URL", "http://localhost:8001")
 ROOT_URLCONF = "licitacaorio.urls"
 SECRET_KEY = environ["SECRET_KEY"]
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "assets"
-STATIC_URL = "static/"
+STATIC_URL = "assets/"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_TZ = True
@@ -30,7 +32,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_extensions",
     "djmoney",
     "users",
     "etp",
