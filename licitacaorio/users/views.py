@@ -17,8 +17,11 @@ def create(request: HttpRequest) -> HttpResponse:
             form.save()
             messages.success(request, "Usuário criado com sucesso!")
             return redirect("users:login")
-    else:
-        form = UserCreation()
+
+        messages.error(request, "Erro ao criar usuário.")
+        return render(request, "users/create.html", {"form": form})
+
+    form = UserCreation()
 
     return render(request, "users/create.html", {"form": form})
 
