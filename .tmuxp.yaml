@@ -1,0 +1,21 @@
+session_name: hackiplan
+windows:
+  - window_name: vim
+    start_directory: ~/Projects/hackiplan/licitacaorio
+    windows_index: 1
+    layout: main-vertical
+    focus: "true"
+    panes:
+      - shell_command: nvim
+        focus: true
+  - window_name: server
+    start_directory: ~/Projects/hackiplan/licitacaorio
+    windows_index: 1
+    layout: main-vertical
+    panes:
+      - shell_command: python manage.py runserver_plus
+        focus: true
+  - window_name: compose
+    start_directory: ~/Projects/hackiplan
+    windows_index: 1
+    layout: main-vertical

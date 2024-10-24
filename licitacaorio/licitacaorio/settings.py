@@ -1,25 +1,30 @@
 from os import environ
 from pathlib import Path
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+from djmoney.money import Currency
+
+ALLOWED_EMAIL_DOMAINS = ["prefeitura.rio", "rio.rj.gov.br"]
+ALLOWED_HOSTS = environ.get("ALLOWED_HOSTS", "localhost").split(",")
+CSRF_TRUSTED_ORIGINS = environ.get("CSRF_TRUSTED_ORIGINS", "localhost").split(",")
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEBUG = True
+DASHBOARD_URL = environ.get("DASHBOARD_URL", "http://localhost:8002")
+DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d %b %Y"]
+DEBUG = environ.get("DEBUG", "1") == "1"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-LANGUAGE_CODE = "pt-br"
+DEFAULT_CURRENCY = Currency("BRL")
+GRAPH_MODELS = {"app_labels": ["etp", "tr"]}
+LANGUAGE_CODE = "pt-BR"
 MEDIA_URL = "media/"
+OLLAMA_API_URL = environ.get("OLLAMA_API_URL", "http://localhost:8001")
 ROOT_URLCONF = "licitacaorio.urls"
 SECRET_KEY = environ["SECRET_KEY"]
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "assets"
-STATIC_URL = "static/"
+STATIC_URL = "assets/"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_TZ = True
 WSGI_APPLICATION = "licitacaorio.wsgi.application"
-ALLOWED_EMAIL_DOMAINS = [
-    "prefeitura.rio",
-    "rio.rj.gov.br",
-]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -28,9 +33,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_extensions",
+    "djmoney",
     "users",
     "etp",
+    "tr",
 ]
 
 MIDDLEWARE = [
@@ -63,34 +69,18 @@ TEMPLATES = [
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    },
-    "postgres": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": environ["DB_NAME"],
-        "USER": environ["DB_USER"],
-        "PASSWORD": environ["DB_PASSWORD"],
-        "HOST": environ["DB_HOST"],
-        "PORT": environ["DB_PORT"],
+        "ENGINE": environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": environ.get("DB_NAME", BASE_DIR / "db.sqlite3"),
+        "USER": environ.get("DB_USER", "user"),
+        "PASSWORD": environ.get("DB_PASSWORD", "password"),
+        "HOST": environ.get("DB_HOST", "localhost"),
+        "PORT": environ.get("DB_PORT", "5432"),
     },
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
-GRAPH_MODELS = {
-    "app_labels": ["etp"],
-}

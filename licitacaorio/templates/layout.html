@@ -1,6 +1,8 @@
+{# vim: set ft=htmldjango #}
 <!DOCTYPE html>
 
 {% load static %}
+{% load djmoney %}
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8" />
@@ -19,139 +21,162 @@
               href="{% static 'media/favicon.ico' %}">
         <link rel="stylesheet"
               href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        {% if htmx %}
-            <script src="https://unpkg.com/htmx.org@2.0.3"
-                    integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
-                    crossorigin="anonymous"></script>
-        {% endif %}
+        <script src="{% static 'js/toggle_theme.js' %}"></script>
+        <script src="https://unpkg.com/htmx.org@2.0.3"
+                integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
+                crossorigin="anonymous"></script>
     </head>
-    <body>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <nav>
             <ul>
                 <li>
-                    <a class="navbar-brand" href="{% url 'home' %}">
-                        <span role="img" aria-label="Home" title="Home">
-                            <img src="{% static 'media/logo_prefeitura_rio_119x60.png' %}"
-                                 alt="Logo da Prefeitura do Rio de Janeiro"
-                                 height="30"
-                                 width="119">
-                        </span>
+                    <a class="navbar-brand"
+                       href="{% url 'home' %}"
+                       data-tooltip="Início"
+                       data-placement="bottom">
+                        <img data-icon-light="{% static 'media/logo-prefeitura-rio-dark.png' %}"
+                             data-icon-dark="{% static 'media/logo-prefeitura-rio-light.png' %}"
+                             alt="Logo da Prefeitura do Rio de Janeiro"
+                             height="30"
+                             width="119">
                     </a>
                 </li>
             </ul>
             <ul>
+                <li>
+                    <button class="outline secondary"
+                            onclick="toggleTheme()"
+                            data-tooltip="Alternar tema"
+                            data-placement="bottom">
+                        <img data-icon-light="{% static 'media/mode-dark.png' %}"
+                             data-icon-dark="{% static 'media/mode-light.png' %}"
+                             alt="Ícone de alternância de tema"
+                             height="30"
+                             width="30">
+                    </button>
+                </li>
                 {% if user.is_authenticated %}
                     <li>
-                        <a class="navbar-etp"
-                           href="{% url 'etp:etp' %}"
-                           data-tooltip="Estudo técnico preliminar"
-                           data-placement="bottom">
-                            <span role="img" aria-label="etp" title="Estudo Técnico Preliminar">
-                                <img src="{% static 'media/etp-512.png' %}"
+                        <button class="outline secondary"
+                                data-tooltip="Dashboard"
+                                data-placement="bottom">
+                            <a href="https://dashboard">
+                                <img data-icon-light="{% static 'media/dashboard-dark.png' %}"
+                                     data-icon-dark="{% static 'media/dashboard-light.png' %}"
+                                     alt="Ícone de Dashboard"
+                                     height="30"
+                                     width="30">
+                            </a>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="outline secondary"
+                                data-tooltip="Novo estudo técnico preliminar"
+                                data-placement="bottom">
+                            <a href="{% url 'etp:index' %}">
+                                <img data-icon-light="{% static 'media/etp-dark.png' %}"
+                                     data-icon-dark="{% static 'media/etp-light.png' %}"
                                      alt="Ícone de Estudo Técnico Preliminar"
                                      height="30"
                                      width="30">
-                            </span>
-                        </a>
+                            </a>
+                        </button>
                     </li>
                     <li>
-                        <a class="navbar-tr"
-                           href="{% url 'tr:tr' %}"
-                           data-tooltip="Termo de referência"
-                           data-placement="bottom">
-                            <span role="img" aria-label="tr" title="Termo de Referência">
-                                <img src="{% static 'media/tr-512.png' %}"
+                        <button class="outline secondary"
+                                data-tooltip="Novo termo de referência"
+                                data-placement="bottom">
+                            <a href="{% url 'tr:index' %}">
+                                <img data-icon-light="{% static 'media/tr-dark.png' %}"
+                                     data-icon-dark="{% static 'media/tr-light.png' %}"
                                      alt="Ícone de Termo de Referência"
                                      height="30"
                                      width="30">
-                            </span>
-                        </a>
+                            </a>
+                        </button>
                     </li>
                     <li>
-                        <a class="navbar-user"
-                           href="{% url 'users:update' %}"
-                           data-tooltip="Usuário"
-                           data-placement="bottom">
-                            <span role="img" aria-label="user" title="Usuário">
-                                <img src="{% static 'media/user-512.png' %}"
+                        <button class="outline secondary"
+                                data-tooltip="Usuário"
+                                data-placement="bottom">
+                            <a href="{% url 'users:update' %}">
+                                <img data-icon-light="{% static 'media/user-dark.png' %}"
+                                     data-icon-dark="{% static 'media/user-light.png' %}"
                                      alt="Ícone de Usuário"
                                      height="30"
                                      width="30">
-                            </span>
-                        </a>
+                            </a>
+                        </button>
                     </li>
                     {% if user.is_superuser %}
                         <li>
-                            <a class="navbar-admin"
-                               href="{% url 'admin:index' %}"
-                               data-tooltip="Admin"
-                               data-placement="bottom">
-                                <span role="img" aria-label="admin" title="admin">
-                                    <img src="{% static 'media/admin-512.png' %}"
+                            <button class="outline secondary"
+                                    href="{% url 'admin:index' %}"
+                                    data-tooltip="Admin"
+                                    data-placement="bottom">
+                                <a href="{% url 'admin:index' %}">
+                                    <img data-icon-light="{% static 'media/admin-dark.png' %}"
+                                         data-icon-dark="{% static 'media/admin-light.png' %}"
                                          alt="Ícone de admin"
                                          height="30"
                                          width="30">
-                                </span>
-                            </a>
+                                </a>
+                            </button>
                         </li>
                     {% endif %}
                     <li>
-                        <a class="navbar-logout"
-                           href="{% url 'users:logout' %}"
-                           data-tooltip="Logout"
-                           data-placement="bottom">
-                            <span role="img" aria-label="logout" title="logout">
-                                <img src="{% static 'media/logout-512.png' %}"
+                        <button class="outline secondary"
+                                data-tooltip="Logout"
+                                data-placement="bottom">
+                            <a href="{% url 'users:logout' %}">
+                                <img data-icon-light="{% static 'media/logout-dark.png' %}"
+                                     data-icon-dark="{% static 'media/logout-light.png' %}"
                                      alt="Ícone de Logout"
                                      height="30"
                                      width="30">
-                            </span>
-                        </a>
+                            </a>
+                        </button>
                     </li>
                 {% else %}
                     <li>
-                        <a class="navbar-create"
-                           href="{% url 'users:create' %}"
-                           data-tooltip="Criar usuário"
-                           data-placement="bottom">
-                            <span role="img" aria-label="create" title="create">
-                                <img src="{% static 'media/create-512.png' %}"
+                        <button class="outline secondary"
+                                data-tooltip="Criar usuário"
+                                data-placement="bottom">
+                            <a href="{% url 'users:create' %}">
+                                <img data-icon-light="{% static 'media/create-dark.png' %}"
+                                     data-icon-dark="{% static 'media/create-light.png' %}"
                                      alt="Ícone de Create"
                                      height="30"
                                      width="30">
-                            </span>
-                        </a>
+                            </a>
+                        </button>
                     </li>
                     <li>
-                        <a class="navbar-login"
-                           href="{% url 'users:login' %}"
-                           data-tooltip="Login"
-                           data-placement="bottom">
-                            <span role="img" aria-label="login" title="Login">
-                                <img src="{% static 'media/login-512.png' %}"
+                        <button class="outline secondary"
+                                data-tooltip="Login"
+                                data-placement="bottom">
+                            <a href="{% url 'users:login' %}">
+                                <img data-icon-light="{% static 'media/login-dark.png' %}"
+                                     data-icon-dark="{% static 'media/login-light.png' %}"
                                      alt="Ícone de Login"
                                      height="30"
                                      width="30">
-                            </span>
-                        </a>
+                            </a>
+                        </button>
                     </li>
                 {% endif %}
             </ul>
         </nav>
-        <main class="container">
+        <main class="container" id="content">
 
             {% block content %}
             {% endblock content %}
         </main>
     </body>
     <footer>
-        {% if user.is_authenticated %}
-            <span>
-                <center>
-                    Logado como: {{ user.username }}
-                </center>
-            </span>
-        {% endif %}
+        {% if user.is_authenticated %}<div id="session-message">Logado como: {{ user.username }}</div>{% endif %}
     </footer>
 </html>

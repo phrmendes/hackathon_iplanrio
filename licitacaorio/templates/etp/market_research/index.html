@@ -1,0 +1,50 @@
+{# vim: set ft=htmldjango #}
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Estudo técnico preliminar
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Pesquisa de mercado</h1>
+    </center>
+    <hr>
+    <br>
+    <div id="market-research-form">
+
+        {% include "etp/market_research/partials/form.html" %}
+    </div>
+    <hr>
+    <table id="market-research-list">
+        <thead>
+            <tr>
+                <th>
+                    <center>{{ form.fields.requester.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.date.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.source.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.product.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.unit_price.label }}</center>
+                </th>
+            </tr>
+        </thead>
+        {% for market_research in market_researches %}
+
+            {% include "etp/market_research/partials/list.html" %}
+        {% endfor %}
+    </table>
+    <center>
+        <a href="{% url 'etp:contract_estimate_index' adm_process_id %}">
+            <button type="button">Próximo</button>
+        </a>
+    </center>
+{% endblock content %}

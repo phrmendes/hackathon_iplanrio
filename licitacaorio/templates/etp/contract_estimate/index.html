@@ -1,0 +1,57 @@
+{# vim: set ft=htmldjango #}
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Estudo técnico preliminar
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Estimativas para contratos</h1>
+    </center>
+    <hr>
+    <br>
+    <div id="contract-estimate-form">
+
+        {% include "etp/contract_estimate/partials/form.html" %}
+    </div>
+    <br>
+    <br>
+    <br>
+    <table id="contract-estimate-list">
+        <thead>
+            <tr>
+                <th>
+                    <center>{{ form.fields.cnpj.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.supplier.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.product.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.description.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.quantity.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.unit_price.label }}</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contract_estimate in contract_estimates %}
+
+                {% include "etp/contract_estimate/partials/list.html" %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <center>
+        <a href="{% url 'etp:installment_index' adm_process_id %}">
+            <button type="button">Próximo</button>
+        </a>
+    </center>
+{% endblock content %}

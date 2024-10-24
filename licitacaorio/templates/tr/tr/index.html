@@ -1,3 +1,5 @@
+{# vim: set ft=htmldjango #}
+
 {% extends "layout.html" %}
 
 {% block title %}
@@ -11,13 +13,12 @@
     <hr>
     <br>
     <form class="form-with-validation"
-          id="main-form"
-          hx-post="{% url 'etp:etp' %}"
-          htmx-swap="#main-form">
+          action="{% url 'tr:index' %}"
+          method="post">
         {% csrf_token %}
         {{ form }}
         <center>
-            <button>Criar</button>
+            <input class="button-submit" type="submit" value="Próximo" />
         </center>
     </form>
 {% endblock content %}

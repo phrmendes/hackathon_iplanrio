@@ -1,0 +1,77 @@
+{# vim: set ft=htmldjango #}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Processo administrativo</th>
+                <th>Justificativa</th>
+                <th>Área requisitante</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for adm_process in adm_processes %}
+                <tr>
+                    <td>
+                        {{ adm_process.organization }}{{ adm_process.document_type }}{{ adm_process.year }}/{{ adm_process.document_number }}
+                    </td>
+                    <td>{{ adm_process.etp.justification }}</td>
+                    <td>{{ adm_process.etp.requesting_area }}</td>
+                    <td>
+                        <button class="action-button button-remove"
+                                hx-delete="{% url 'etp:delete' adm_process.id %}"
+                                hx-target="closest tr"
+                                hx-confirm="Tem certeza que deseja excluir este estudo técnico?">Excluir</button>
+                    </td>
+                    <td>
+                        <a href="{% url 'etp:etp_index' adm_process.id %}">
+                            <button class="action-button button-edit" type="button">Editar</button>
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">Nenhum estudo técnico encontrado.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="pagination-container">
+    <nav class="pagination" aria-label="Navegação de páginas">
+        {% if adm_processes.has_previous %}
+            <a href="#"
+               hx-get="{% url 'etp:list' %}?page=1"
+               hx-target="#etp-list"
+               aria-label="Primeira página">
+                <div aria-hidden="true">«</div>
+                Primeira
+            </a>
+            <a href="#"
+               hx-get="{% url 'etp:list' %}?page={{ adm_processes.previous_page_number }}"
+               hx-target="#etp-list"
+               aria-label="Página anterior">Anterior</a>
+        {% else %}
+            <div class="disabled" aria-hidden="true">« Primeira</div>
+            <div class="disabled" aria-hidden="true">Anterior</div>
+        {% endif %}
+        <div class="current-page" aria-current="page">
+            Página {{ adm_processes.number }} de {{ adm_processes.paginator.num_pages }}
+        </div>
+        {% if adm_processes.has_next %}
+            <a href="#"
+               hx-get="{% url 'etp:list' %}?page={{ adm_processes.next_page_number }}"
+               hx-target="#etp-list"
+               aria-label="Próxima página">Próxima</a>
+            <a href="#"
+               hx-get="{% url 'etp:list' %}?page={{ adm_processes.paginator.num_pages }}"
+               hx-target="#etp-list"
+               aria-label="Última página">
+                Última
+                <div aria-hidden="true">»</div>
+            </a>
+        {% else %}
+            <div class="disabled" aria-hidden="true">Próxima</div>
+            <div class="disabled" aria-hidden="true">Última »</div>
+        {% endif %}
+    </nav>
+</div>

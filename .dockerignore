@@ -3,7 +3,6 @@
 **/.direnv
 **/.envrc
 **/.venv
-**/README.md
-**/db.sqlite3
-**/flake.lock
-**/flake.nix
+**/*.md
+**/*.sqlite3
+**/flake.*

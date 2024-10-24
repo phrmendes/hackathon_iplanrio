@@ -1,0 +1,65 @@
+{# vim: set ft=htmldjango #}
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Termo de referência
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Matriz de riscos</h1>
+    </center>
+    <hr>
+    <br>
+    <div id="market-research-form">
+
+        {% include "tr/risk_matrix/partials/form.html" %}
+    </div>
+    <hr>
+    <table id="risk-matrix-list">
+        <thead>
+            <tr>
+                <th>
+                    <center>{{ form.fields.type.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.risk.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.category.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.subcategory.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.probability.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.impact.label }}</center>
+                </th>
+                <th>
+                    <center>P×I</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.strategy.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.mitigation.label }}</center>
+                </th>
+                <th>
+                    <center>{{ form.fields.in_charge.label }}</center>
+                </th>
+            </tr>
+        </thead>
+        {% for row in risk_matrix %}
+
+            {% include "tr/risk_matrix/partials/list.html" %}
+        {% endfor %}
+    </table>
+    <center>
+        <a href="{% url 'tr:summary_index' tr_id %}">
+            <button type="button">Resumo</button>
+        </a>
+    </center>
+{% endblock content %}

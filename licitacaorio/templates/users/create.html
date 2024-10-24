@@ -14,7 +14,7 @@
           action="{% url 'users:create' %}"
           method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form }}
         <center>
             <button>Criar</button>
         </center>

@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Estudo técnico preliminar
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h1>Parcelamento</h1>
+    </center>
+    <hr>
+    <br>
+    <div id="installment-form">
+        <form class="form-with-validation"
+              hx-post="{% url 'etp:installment_fields' adm_process_id %}"
+              hx-target="#installment-form"
+              hx-swap="outerHTML">
+            {% csrf_token %}
+            <label for="enable_installment">
+                Ativar parcelamento:
+                <input type="checkbox"
+                       role="switch"
+                       name="enable_installment"
+                       id="enable_installment"
+                       hx-get="{% url 'etp:installment_fields' adm_process_id %}"
+                       hx-trigger="change"
+                       hx-target="#installment-form-fields"
+                       hx-swap="innerHTML">
+            </label>
+            <div id="installment-form-fields"></div>
+        </form>
+    </div>
+    <center>
+        <a href="{% url 'etp:summary_index' adm_process_id %}">
+            <button type="button">Resumo</button>
+        </a>
+    </center>
+{% endblock content %}
