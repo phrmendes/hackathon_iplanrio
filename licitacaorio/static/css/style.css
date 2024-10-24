@@ -26,7 +26,6 @@ nav {
 }
 
 /* Button Styles */
-/* Adicione isso ao seu CSS existente */
 .action-button {
   width: 110px;
   height: 60px;
@@ -46,6 +45,7 @@ nav {
 .button-edit {
   background-color: var(--pico-color-yellow-450);
   color: var(--pico-color-zinc-50);
+  margin-bottom: 0px !important;
 }
 
 /* Pagination Styles */
