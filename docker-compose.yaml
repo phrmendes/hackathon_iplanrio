@@ -12,7 +12,7 @@ services:
       - postgres:/var/lib/postgresql/data
     networks:
       - app
-
+  
   ollama:
     build:
       dockerfile: ./ollama/ollama.Dockerfile
@@ -79,7 +79,7 @@ services:
         - action: sync+restart
           path: ./nginx/nginx.conf
           target: /etc/nginx/nginx.conf.d
-
+          
 volumes:
   postgres:
   ollama:
