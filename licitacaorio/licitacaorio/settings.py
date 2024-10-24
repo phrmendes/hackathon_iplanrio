@@ -4,7 +4,8 @@ from pathlib import Path
 from djmoney.money import Currency
 
 ALLOWED_EMAIL_DOMAINS = ["prefeitura.rio", "rio.rj.gov.br"]
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+ALLOWED_HOSTS = environ.get("ALLOWED_HOSTS", "localhost").split(",")
+CSRF_TRUSTED_ORIGINS = environ.get("CSRF_TRUSTED_ORIGINS", "localhost").split(",")
 BASE_DIR = Path(__file__).resolve().parent.parent
 DASHBOARD_URL = environ.get("DASHBOARD_URL", "http://localhost:8002")
 DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d %b %Y"]
