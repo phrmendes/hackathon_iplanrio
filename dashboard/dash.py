@@ -297,6 +297,14 @@ setores = ["Selecione...", "SMS", "PRO", "MEM"]
 selected_orgao = st.selectbox("Selecione o Setor Demandante:", setores, key="orgao")
 
 
+# Inicializar valores na session_state, se não existirem
+if "data_inicial" not in st.session_state:
+    st.session_state.data_inicial = pd.to_datetime("2024-01-01")
+
+if "data_final" not in st.session_state:
+    st.session_state.data_final = pd.to_datetime("2024-12-31")
+
+# Criando os inputs de data sem passar `value`
 start_data = st.date_input("Data Inicial", key="data_inicial")
 end_data = st.date_input("Data Final", key="data_final")
 
