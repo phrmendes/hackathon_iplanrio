@@ -1,6 +1,7 @@
 from django.db import models
 
 from etp.models import AdmProcess
+from licitacaorio.utils import StatusChoices
 
 
 class TR(models.Model):
@@ -12,10 +13,23 @@ class TR(models.Model):
     description = models.TextField()
     service_location = models.CharField(max_length=100)
     scheduled_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    concluded_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    previous_status = models.CharField(
+        max_length=9,
+        choices=StatusChoices.choices(),
+        default=StatusChoices.PENDING.value,
+    )
+    status = models.CharField(
+        max_length=9,
+        choices=StatusChoices.choices(),
+        default=StatusChoices.PENDING.value,
+    )
 
     def __str__(self) -> str:
         """Unicode representation of TR."""
-        return f"TR(id={self.id}, adm_process={self.adm_process})"
+        return f"TR(id={self.id}, adm_process={self.adm_process}, status={self.status})"
 
 
 class RiskMatrix(models.Model):

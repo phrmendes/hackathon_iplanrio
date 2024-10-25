@@ -21,6 +21,11 @@ urlpatterns = [
         name="delete",
     ),
     path(
+        "<int:tr_id>/change_status/",
+        views.tr_change_status,
+        name="change_status",
+    ),
+    path(
         "<int:tr_id>/risk_matrix/",
         views.risk_matrix_index,
         name="risk_matrix_index",

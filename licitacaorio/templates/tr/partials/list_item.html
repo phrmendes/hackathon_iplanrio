@@ -1,0 +1,28 @@
+{# vim: set ft=htmldjango #}
+<td>{{ tr.adm_process }}</td>
+<td>{{ tr.objective }}</td>
+<td>{{ tr.service_location }}</td>
+<td>{{ tr.scheduled_date }}</td>
+<td>
+    <button class="action-button button-status"
+            hx-post="{% url 'tr:change_status' tr.id %}"
+            hx-target="#tr-{{ tr.id }}"
+            hx-swap="innerHTML">
+        {% if tr.status == "Pendente" %}
+            Concluir
+        {% else %}
+            Pendente
+        {% endif %}
+    </button>
+</td>
+<td>
+    <a href="{% url 'tr:index' %}">
+        <button class="action-button button-edit" type="button">Editar</button>
+    </a>
+</td>
+<td>
+    <button class="action-button button-remove"
+            hx-delete="{% url 'tr:delete' tr.id %}"
+            hx-target="closest tr"
+            hx-confirm="Tem certeza que deseja excluir este termo de referência?">Excluir</button>
+</td>

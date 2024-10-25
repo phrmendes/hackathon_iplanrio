@@ -26,6 +26,11 @@ urlpatterns = [
         name="etp_index",
     ),
     path(
+        "<int:adm_process_id>/change_status/",
+        views.etp_change_status,
+        name="etp_change_status",
+    ),
+    path(
         "<int:adm_process_id>/market_research/",
         views.market_research_index,
         name="market_research_index",

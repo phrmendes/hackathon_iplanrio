@@ -1,9 +1,18 @@
 {# vim: set ft=htmldjango #}
-<div class="success-messages">
-    <p class="success">Parcelamento salvo com sucesso!</p>
-</div>
-<center>
-    <a href="{% url 'etp:summary_index' adm_process_id %}">
-        <button type="button">Próximo</button>
-    </a>
-</center>
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Sucesso
+{% endblock title %}
+
+{% block content %}
+    <center>
+        <h2>Senha alterada!</h2>
+    </center>
+    <center>
+        <a href="{% url 'home' %}">
+            <button type="button">Voltar para o início</button>
+        </a>
+    </center>
+{% endblock content %}

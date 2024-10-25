@@ -29,6 +29,7 @@ venvPath = "."
 venv = ".venv"
 reportIncompatibleVariableOverride = false
 reportAttributeAccessIssue = false
+reportOptionalMemberAccess = false
 
 [tool.ruff]
 target-version = "py310"

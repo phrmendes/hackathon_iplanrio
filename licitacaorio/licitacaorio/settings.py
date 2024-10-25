@@ -5,9 +5,9 @@ from djmoney.money import Currency
 
 ALLOWED_EMAIL_DOMAINS = ["prefeitura.rio", "rio.rj.gov.br"]
 ALLOWED_HOSTS = environ.get("ALLOWED_HOSTS", "localhost").split(",")
-CSRF_TRUSTED_ORIGINS = environ.get("CSRF_TRUSTED_ORIGINS", "localhost").split(",")
+CSRF_TRUSTED_ORIGINS = environ.get("CSRF_TRUSTED_ORIGINS", "http://localhost:1337").split(",")
 BASE_DIR = Path(__file__).resolve().parent.parent
-DASHBOARD_URL = environ.get("DASHBOARD_URL", "http://localhost:8002")
+DASHBOARD_URL = environ.get("DASHBOARD_URL", "http://localhost:8001")
 DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d %b %Y"]
 DEBUG = environ.get("DEBUG", "1") == "1"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -71,10 +71,10 @@ DATABASES = {
     "default": {
         "ENGINE": environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
         "NAME": environ.get("DB_NAME", BASE_DIR / "db.sqlite3"),
-        "USER": environ.get("DB_USER", "user"),
-        "PASSWORD": environ.get("DB_PASSWORD", "password"),
-        "HOST": environ.get("DB_HOST", "localhost"),
-        "PORT": environ.get("DB_PORT", "5432"),
+        "USER": environ.get("DB_USER", None),
+        "PASSWORD": environ.get("DB_PASSWORD", None),
+        "HOST": environ.get("DB_HOST", None),
+        "PORT": environ.get("DB_PORT", None),
     },
 }
 

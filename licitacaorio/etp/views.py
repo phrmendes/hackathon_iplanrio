@@ -4,9 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_GET, require_http_methods
+from django.utils.timezone import now
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from etp import forms, models
+from licitacaorio.utils import StatusChoices
 
 if TYPE_CHECKING:
     from licitacaorio.types import Context
@@ -33,24 +35,21 @@ def adm_process_index(request: HttpRequest) -> HttpResponse:
 @login_required
 @require_GET
 def adm_process_list(request: HttpRequest) -> HttpResponse:
-    adm_process_list = models.AdmProcess.objects.all().order_by("-id")
+    adm_process_list = models.AdmProcess.objects.filter(user=request.user).order_by("-id")
     paginator = Paginator(adm_process_list, 5)
     page = request.GET.get("page", 1)
     adm_processes = paginator.get_page(page)
 
-    return render(request, "etp/list.html", {"adm_processes": adm_processes})
+    return render(request, "etp/partials/list.html", {"adm_processes": adm_processes})
 
 
 @login_required
 @require_http_methods(["DELETE"])
 def adm_process_delete(request: HttpRequest, adm_process_id: int) -> HttpResponse:
-    try:
-        adm_process = get_object_or_404(models.AdmProcess, pk=adm_process_id)
-        adm_process.delete()
+    adm_process = get_object_or_404(models.AdmProcess, pk=adm_process_id)
+    adm_process.delete()
 
-        return render(request, "empty.html")
-    except models.AdmProcess.DoesNotExist:
-        return HttpResponse(status=404)
+    return render(request, "empty.html")
 
 
 @login_required
@@ -74,6 +73,29 @@ def etp_index(request: HttpRequest, adm_process_id: int) -> HttpResponse:
     context["form"] = forms.ETP()
 
     return render(request, "etp/etp/index.html", context)
+
+
+@login_required
+@require_POST
+def etp_change_status(request: HttpRequest, adm_process_id: int) -> HttpResponse:
+    adm_process = get_object_or_404(models.AdmProcess, id=adm_process_id)
+    etp = models.ETP.objects.filter(adm_process=adm_process).first()
+
+    if etp.status == "Pendente":
+        status = StatusChoices.FINISHED.value
+        previous_status = StatusChoices.PENDING.value
+        concluded_at = now()
+    else:
+        status = StatusChoices.PENDING.value
+        previous_status = StatusChoices.FINISHED.value
+        concluded_at = None
+
+    etp.status = status
+    etp.concluded_at = concluded_at
+    etp.previous_status = previous_status
+    etp.save()
+
+    return render(request, "etp/partials/list_item.html", {"adm_process": adm_process})
 
 
 @login_required
