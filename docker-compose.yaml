@@ -6,13 +6,11 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_USER: ${DB_USER}
-    ports:
-      - 5432:5432
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
-      - app
-  
+      - db
+
   ollama:
     build:
       dockerfile: ./ollama/ollama.Dockerfile
@@ -25,20 +23,11 @@ services:
   ollama-api:
     build:
       dockerfile: ./ollama/ollama-api.Dockerfile
-    ports:
-      - 8001:8001
     networks:
       - ollama
-      - app
+      - dashboard
     depends_on:
       - ollama
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./ollama/app.py
-          target: /app
-        - action: rebuild
-          path: ./ollama/pyproject.toml
 
   licitacaorio:
     build:
@@ -47,46 +36,65 @@ services:
         SECRET_KEY: ${SECRET_KEY}
     env_file: .env
     networks:
-      - app
+      - licitacaorio
+      - db
     volumes:
       - static:/app/assets
     depends_on:
       - db
       - ollama
       - ollama-api
-      # - dashboard
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./licitacaorio
-          target: /app
-        - action: rebuild
-          path: ./licitacaorio/pyproject.toml
+      - dashboard
 
-  nginx:
+  nginx-licitacaorio:
     build:
-      dockerfile: ./nginx/Dockerfile
+      dockerfile: ./licitacaorio/nginx.Dockerfile
     ports:
       - 1337:80
     depends_on:
       - licitacaorio
     networks:
-      - app
+      - licitacaorio
     volumes:
       - static:/app/assets
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./nginx/nginx.conf
-          target: /etc/nginx/nginx.conf.d
-          
+
+  dashboard:
+    restart: always
+    build:
+      dockerfile: ./dashboard/dashboard.Dockerfile
+    networks:
+      - db
+      - ollama
+      - dashboard
+
+  nginx-dashboard:
+    build:
+      dockerfile: ./dashboard/nginx.Dockerfile
+    depends_on:
+      - dashboard
+    networks:
+      - licitacaorio
+      - dashboard
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: ["tunnel", "--no-autoupdate", "run"]
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TOKEN}
+    networks:
+      - licitacaorio
+
 volumes:
   postgres:
   ollama:
   static:
 
 networks:
-  app:
+  licitacaorio:
     driver: bridge
   ollama:
+    driver: bridge
+  dashboard:
+    driver: bridge
+  db:
     driver: bridge
