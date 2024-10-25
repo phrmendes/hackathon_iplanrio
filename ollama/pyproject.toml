@@ -1,11 +1,10 @@
 [project]
 name = "ollama"
 version = "1.0.0"
-readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi[standard]>=0.115.2",
-    "ollama",
-    "requests>=2.32.3",
-    "uvicorn>=0.32.0",
+  "fastapi[standard]>=0.115.2",
+  "ollama",
+  "requests>=2.32.3",
+  "uvicorn>=0.32.0",
 ]

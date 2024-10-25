@@ -1,7 +1,6 @@
 [project]
 name = "app"
 version = "0.1.0"
-readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
   "django-money>=3.5.3",

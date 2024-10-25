@@ -1,8 +1,8 @@
-**/__pycache__
-**/.ruff_cache
+**/*.Dockerfile
+**/*.md
 **/.direnv
 **/.envrc
+**/.ruff_cache
 **/.venv
-**/*.md
-**/*.sqlite3
+**/__pycache__
 **/flake.*
