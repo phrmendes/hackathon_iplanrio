@@ -365,7 +365,6 @@ tr_json = df_tr.to_json(orient="records", indent=2)
 
 # Verificar se um contrato foi selecionado
 if selected_contract:
-
     # Carregar dados detalhados do contrato selecionado
     df_detailed = load_data(
         f"SELECT * FROM etp_admprocess WHERE organization || '-' || document_type || '-' || document_number = '{selected_contract}'"
@@ -396,11 +395,6 @@ if selected_contract:
                 response = requests.get(
                     "http://localhost:8001/ask", params={"prompt": prompt}
                 )
-
-            # Fazer a requisição GET para a LLM com o prompt como parâmetro
-            response = requests.get(
-                "http://localhost:8001/ask", params={"prompt": prompt}
-            )
 
             # Verificar e exibir a resposta
             if response.status_code == 200:
