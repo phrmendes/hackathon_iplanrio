@@ -24,7 +24,7 @@ services:
 
   ollama-api:
     build:
-      dockerfile: ./ollama/app.Dockerfile
+      dockerfile: ./ollama/ollama-api.Dockerfile
     ports:
       - 8001:8001
     networks:
@@ -42,7 +42,7 @@ services:
 
   licitacaorio:
     build:
-      dockerfile: ./licitacaorio/Dockerfile
+      dockerfile: ./licitacaorio/licitacaorio.Dockerfile
       args:
         SECRET_KEY: ${SECRET_KEY}
     env_file: .env
