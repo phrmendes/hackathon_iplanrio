@@ -3,6 +3,9 @@ import sqlite3
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import requests
+import json
+
 
 st.set_page_config(
     page_title="LICITACAO.RIO",
@@ -283,6 +286,80 @@ df_filtered = df_filtered.rename(
 
 st.subheader("📋 ETPS Filtradas")
 st.dataframe(df_filtered)
+
+# Seção para fazer perguntas à LLM
+st.header("🤖 Dúvidas sobre algum contrato? Fale com nossa IA!")
+
+df_contratos = load_data("SELECT organization || '-' || document_type || '-' || document_number AS Contratos FROM etp_admprocess LIMIT 5;")
+st.write("Selecione um contrato:")
+
+# Exibir a lista de contratos em um selectbox
+selected_contract = st.selectbox("Contratos", options=df_contratos['Contratos'].tolist())
+
+# Separar o contrato selecionado em suas partes para consultar a tabela original
+org, doc_type, doc_number = selected_contract.split('-')
+
+# Buscar os dados completos da tabela etp_admprocess para o contrato selecionado
+query = f"""
+    SELECT *
+    FROM etp_admprocess
+    WHERE organization = '{org}' 
+      AND document_type = '{doc_type}' 
+      AND document_number = '{doc_number}';
+"""
+df_detailed = load_data(query)
+
+
+# Carregar e exibir a tabela `etp_etp`
+df_etp = load_data(f"SELECT * FROM etp_etp WHERE id = {df_detailed['id'].values[0]}")
+
+# Converter o DataFrame `etp_etp` para JSON e exibir
+etp_json = df_etp.to_json(orient="records", indent=2)
+
+
+# Carregar e exibir a tabela `tr_tr`
+df_tr = load_data(f"SELECT * FROM tr_tr WHERE id = {df_detailed['id'].values[0]}")
+
+# Converter o DataFrame `tr_tr` para JSON e exibir
+tr_json = df_tr.to_json(orient="records", indent=2)
+
+# Verificar se um contrato foi selecionado
+if selected_contract:
+
+    # Carregar dados detalhados do contrato selecionado
+    df_detailed = load_data(f"SELECT * FROM etp_admprocess WHERE organization || '-' || document_type || '-' || document_number = '{selected_contract}'")
+
+    # Carregar e converter dados da tabela `etp_etp` e `tr_tr` para JSON
+    etp_json = load_data(f"SELECT justification, requesting_area, created_at, updated_at, status FROM etp_etp WHERE id = {df_detailed['id'].values[0]}").to_json(orient="records")
+    tr_json = load_data(f"SELECT objective, justification, description, service_location, scheduled_date, created_at, updated_at, status FROM tr_tr WHERE id = {df_detailed['id'].values[0]}").to_json(orient="records")
+
+    # Botão para enviar o contrato selecionado como prompt para a LLM
+    if st.button("Enviar para LLM"):
+        try:
+            # Criar o prompt para a LLM
+            prompt = (
+                f"Resuma o contrato '{selected_contract}' com os dados dos json a seguir:\n\n"
+                f"Tabela etp_etp: {etp_json}\n\n"
+                f"Tabela tr_tr: {tr_json}\n\n"
+                "Por favor, resuma essas informações em um único parágrafo."
+            )
+
+            # Indicar que a LLM está processando a requisição
+            with st.spinner("Aguardando resposta da LLM..."):
+                # Fazer a requisição GET para a LLM com o prompt como parâmetro
+                response = requests.get("http://localhost:8001/ask", params={"prompt": prompt})
+
+            # Fazer a requisição GET para a LLM com o prompt como parâmetro
+            response = requests.get("http://localhost:8001/ask", params={"prompt": prompt})
+
+            # Verificar e exibir a resposta
+            if response.status_code == 200:
+                st.write("Resposta da LLM:")
+                st.write(response.json().get("response", "Sem resposta"))
+            else:
+                st.error(f"Erro {response.status_code} ao obter resposta da LLM.")
+        except Exception as e:
+            st.error(f"Erro ao fazer a requisição: {e}")
 
 st.markdown(
     '<div class="footer">🚀 Desenvolvido por DADOS IPLAN</div>', unsafe_allow_html=True
