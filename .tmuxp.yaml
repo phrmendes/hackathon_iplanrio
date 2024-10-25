@@ -13,7 +13,7 @@ windows:
     windows_index: 1
     layout: main-vertical
     panes:
-      - shell_command: python manage.py runserver_plus
+      - shell_command: python manage.py runserver
         focus: true
   - window_name: compose
     start_directory: ~/Projects/hackiplan
