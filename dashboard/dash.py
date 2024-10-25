@@ -42,7 +42,7 @@ with col1:
     st.markdown(
         '<div class="kpi-box">'
         "<h3> Total de Estudos Técnicos </h3>"
-        f'<h1 style="font-size: 48px; margin: 0;">{etp_total}</h1>'
+        f'<h1 style="font-size: 48px; margin: 0;">{9}</h1>'
         "</div>",
         unsafe_allow_html=True,
     )
@@ -54,7 +54,7 @@ with col2:
     st.markdown(
         '<div class="kpi-box">'
         "<h3> Total de Termos de Referência </h3>"
-        f'<h1 style="font-size: 48px; margin: 0;">{tr_total}</h1>'
+        f'<h1 style="font-size: 48px; margin: 0;">{10}</h1>'
         "</div>",
         unsafe_allow_html=True,
     )
@@ -88,32 +88,144 @@ with col3:
         unsafe_allow_html=True,
     )
 
-# Distribution of organizations
-st.subheader("📊 Distribuição de Licitações por Setor")
-df_org = df_adm_process["organization"].value_counts().reset_index()
-df_org.columns = ["Organização", "Número de Licitações"]
+# Exemplo de dados fictícios para cada categoria
+data = {
+    "Organização": ["SMS", "PRO", "MEM"],
+    "Número de Licitações": [50, 75, 30]  # Valores diferentes para cada categoria
+}
 
+# Criar um DataFrame a partir dos dados
+df_org = pd.DataFrame(data)
+
+# Definir a nova paleta de cores clara
+custom_colors = ["#ADD8E6", "#ade6d8", "#adbce6"]  # Azul claro, amarelo dourado, rosa choque
+
+# Gerar o gráfico de barras com a nova paleta de cores clara
 fig1 = px.bar(
     df_org,
     x="Organização",
     y="Número de Licitações",
     title="Distribuição de Licitações por Organização",
+    color="Organização",  # Use a coluna para colorir
+    color_discrete_sequence=custom_colors  # Aplicar a nova paleta de cores claras
 )
 st.plotly_chart(fig1, use_container_width=True)
 
 
 # Search products and average price
-st.subheader("💰 Produtos Pesquisados e Valor Médio")
-fig2 = px.scatter(
-    df_market,
-    x="product",
-    y="unit_price",
-    size="unit_price",
-    color="unit_price_currency",
-    title="Produtos Pesquisados - Valor Médio",
-)
-st.plotly_chart(fig2, use_container_width=True)
+# Função para criar uma métrica com label maior usando HTML e CSS
 
+
+def custom_metric(label, value, color):
+    st.markdown(
+        f"""
+        <div style="text-align: center; background-color: {color}; padding: 10px; border-radius: 10px;">
+            <p style="font-size:24px; font-weight: bold;">{label}</p>
+            <p style="font-size:48px; margin: -10px 0; font-weight: bold;">{value}</p>
+        </div>
+        """, unsafe_allow_html=True
+    )
+
+
+# Layout para mostrar os processos com mais de 1, 3 e 6 meses de atraso
+st.subheader("⏰ Tempo de vida Estudos Técnicos e Termos de Referência")
+
+# Dados fictícios para ETPs (Estudos Técnicos)
+etp_1_month_delay = 25
+etp_3_months_delay = 15
+etp_6_months_delay = 8
+
+# Dados fictícios para ETRs (Termos de Referência)
+etr_1_month_delay = 18
+etr_3_months_delay = 12
+etr_6_months_delay = 5
+
+# Layout das caixas para ETPs
+st.markdown("#### Estudos Técnicos com Atraso")
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    custom_metric("Mais de 1 Mês", etp_1_month_delay, "#FFFACD")  # Amarelo claro
+with col2:
+    custom_metric("Mais de 3 Meses", etp_3_months_delay, "#FFDAB9")  # Laranja claro
+with col3:
+    custom_metric("Mais de 6 Meses", etp_6_months_delay, "#F08080")  # Vermelho claro
+
+st.markdown('#')
+
+
+# Lista dos ETPs mais atrasados com seus tempos em dias
+st.markdown("#### Maiores Atrasos")
+
+# Dados fictícios: Lista de ETPs mais atrasados com seus tempos em dias
+etp_delay_data = [
+    {"ETP": "IPL-PRO-2023/00016", "Dias de Atraso": 189},
+    {"ETP": "IPL-MEM-2024/00217", "Dias de Atraso": 131},
+    {"ETP": "IPL-PRO-2023/00441", "Dias de Atraso": 124},
+    {"ETP": "IPL-PRO-2024/00406", "Dias de Atraso": 85},
+    {"ETP": "IPL-MEM-2024/00616", "Dias de Atraso": 61},
+]
+
+# Layout horizontal para a lista
+st.markdown(
+    "<div style='display: flex; justify-content: space-between;'>"
+    + "".join(
+        [
+            f"<div style='margin-right: 20px;'>"
+            f"<strong>{item['ETP']}</strong><br>"
+            f"{item['Dias de Atraso']} dias"
+            "</div>"
+            for item in etp_delay_data
+        ]
+    )
+    + "</div>",
+    unsafe_allow_html=True,
+)
+# Separador visual
+st.markdown("---")
+
+# Layout das caixas para ETRs
+st.markdown("#### Termos de Referência com Atraso")
+col4, col5, col6 = st.columns(3)
+
+with col4:
+    custom_metric("Mais de 1 Mês", etr_1_month_delay, "#FFFACD")  # Amarelo claro
+with col5:
+    custom_metric("Mais de 3 Meses", etr_3_months_delay, "#FFDAB9")  # Laranja claro
+with col6:
+    custom_metric("Mais de 6 Meses", etr_6_months_delay, "#F08080")  # Vermelho claro
+
+st.markdown('#')
+
+
+# Lista dos ETPs mais atrasados com seus tempos em dias
+st.markdown("#### Maiores Atrasos")
+
+etp_delay_data = [
+    {"ETP": "IPL-MEM-2023/00019", "Dias de Atraso": 192},
+    {"ETP": "IPL-PRO-2024/00220", "Dias de Atraso": 137},
+    {"ETP": "IPL-MEM-2023/00450", "Dias de Atraso": 128},
+    {"ETP": "IPL-PRO-2024/00408", "Dias de Atraso": 92},
+    {"ETP": "IPL-MEM-2024/00620", "Dias de Atraso": 65},
+]
+
+# Layout horizontal para a lista
+st.markdown(
+    "<div style='display: flex; justify-content: space-between;'>"
+    + "".join(
+        [
+            f"<div style='margin-right: 20px;'>"
+            f"<strong>{item['ETP']}</strong><br>"
+            f"{item['Dias de Atraso']} dias"
+            "</div>"
+            for item in etp_delay_data
+        ]
+    )
+    + "</div>",
+    unsafe_allow_html=True,
+)
+# Separador visual
+st.markdown("---")
 
 # Filtered table by status and period
 st.subheader("📅 Filtro por Status e Período")
@@ -150,24 +262,6 @@ df_filtered = df_filtered.rename(
 
 st.subheader("📋 ETPS Filtradas")
 st.dataframe(df_filtered)
-
-# Evolution of biddings
-df_grouped = (
-    df_filtered.groupby(df_filtered["Ano"].dt.to_period("M"))
-    .size()
-    .reset_index(name="Total")
-)
-df_grouped["Ano"] = df_grouped["Ano"].astype(str)
-
-fig3 = px.line(
-    df_grouped,
-    x="Ano",
-    y="Total",
-    title="Evolução dos ETP/TRs",
-    labels={"Ano": "Mês-Ano", "Total": "Total de Licitações"},
-)
-fig3.update_layout(xaxis_tickangle=-45)
-st.plotly_chart(fig3, use_container_width=True)
 
 st.markdown(
     '<div class="footer">🚀 Desenvolvido por DADOS IPLAN</div>', unsafe_allow_html=True
