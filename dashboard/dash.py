@@ -1,11 +1,10 @@
+import json
 import sqlite3
 
 import pandas as pd
 import plotly.express as px
-import streamlit as st
 import requests
-import json
-
+import streamlit as st
 
 st.set_page_config(
     page_title="LICITACAO.RIO",
@@ -251,66 +250,93 @@ st.markdown(
 # Separador visual
 st.markdown("---")
 
-# Filtered table by status and period
-st.subheader("📅 Filtro por Status e Período por Setor Demandante")
 
-status_options = ["Concluído", "Em andamento", "Cancelado"]
-selected_status = st.selectbox("Selecione o Status:", status_options)
+st.subheader("📅 Filtro por Status, Período e Setor Demandante")
 
-# List of orgoas
-setores = ["SMS", "PRO", "MEM"]
-selected_orgao = st.selectbox("Selecione o Setor Demandante:", setores)
 
-# Inputs of data
-start_data = st.date_input("Data Inicial", value=pd.to_datetime("2024-01-01").date())
-end_data = st.date_input("Data Final", value=pd.to_datetime("2024-12-31").date())
+dados_etps = {
+    "ID": [1, 2, 3, 4, 5],
+    "Usuário": ["Alice", "Bruno", "Carlos", "Diana", "Eva"],
+    "Número do Documento": [
+        "IPL-PRO-2023/00016",
+        "IPL-MEM-2024/00217",
+        "IPL-PRO-2023/00441",
+        "IPL-PRO-2024/00406",
+        "IPL-MEM-2024/00616",
+    ],
+    "Tipo de Documento": [
+        "Concluído",
+        "Em andamento",
+        "Cancelado",
+        "Concluído",
+        "Em andamento",
+    ],
+    "Órgão": ["SMS", "PRO", "MEM", "SMS", "PRO"],
+    "Data de Criação": pd.to_datetime(
+        ["2024-01-01", "2024-02-15", "2024-03-20", "2024-04-05", "2024-05-10"]
+    ),
+    "Data Prevista de Conclusão": pd.to_datetime(
+        ["2024-06-01", "2024-07-15", "2024-08-20", "2024-09-05", "2024-10-10"]
+    ),
+}
+df_adm_process = pd.DataFrame(dados_etps)
 
-# data conversion
-start_data = pd.to_datetime(start_data)
-end_data = pd.to_datetime(end_data)
-df_adm_process["year"] = pd.to_datetime(df_adm_process["year"], format="%Y")
+df_adm_process["Atraso (Dias)"] = (
+    pd.to_datetime("2024-10-25") - df_adm_process["Data Prevista de Conclusão"]
+).dt.days
+
+
+if "reset" not in st.session_state:
+    st.session_state.reset = False
+
+
+status_options = ["Selecione...", "Concluído", "Em andamento", "Cancelado"]
+selected_status = st.selectbox("Selecione o Status:", status_options, key="status")
+
+setores = ["Selecione...", "SMS", "PRO", "MEM"]
+selected_orgao = st.selectbox("Selecione o Setor Demandante:", setores, key="orgao")
+
+
+start_data = st.date_input("Data Inicial", key="data_inicial")
+end_data = st.date_input("Data Final", key="data_final")
 
 
 df_filtered = df_adm_process[
-    (df_adm_process["document_type"] == selected_status)
-    & (df_adm_process["year"] >= start_data)
-    & (df_adm_process["year"] <= end_data)
-    & (df_adm_process["organization"] == "organization")
+    (
+        (selected_status == "Selecione...")
+        | (df_adm_process["Tipo de Documento"] == selected_status)
+    )
+    & ((selected_orgao == "Selecione...") | (df_adm_process["Órgão"] == selected_orgao))
+    & (df_adm_process["Data de Criação"] >= pd.to_datetime(start_data))
+    & (df_adm_process["Data de Criação"] <= pd.to_datetime(end_data))
 ]
 
-df_filtered = df_filtered.rename(
-    columns={
-        "id": "ID",
-        "user": "Usuário",
-        "document_number": "Número do Documento",
-        "document_type": "Tipo de Documento",
-        "user_id": "ID do Usuário",
-        "organization": "Órgão",
-        "year": "Ano",
-    }
-)
 
-st.subheader("📋 ETPS Filtradas")
+st.subheader("📋 ETPS Filtrados")
 st.dataframe(df_filtered)
 
 # Seção para fazer perguntas à LLM
 st.header("🤖 Dúvidas sobre algum contrato? Fale com nossa IA!")
 
-df_contratos = load_data("SELECT organization || '-' || document_type || '-' || document_number AS Contratos FROM etp_admprocess LIMIT 5;")
+df_contratos = load_data(
+    "SELECT organization || '-' || document_type || '-' || document_number AS Contratos FROM etp_admprocess LIMIT 5;"
+)
 st.write("Selecione um contrato:")
 
 # Exibir a lista de contratos em um selectbox
-selected_contract = st.selectbox("Contratos", options=df_contratos['Contratos'].tolist())
+selected_contract = st.selectbox(
+    "Contratos", options=df_contratos["Contratos"].tolist()
+)
 
 # Separar o contrato selecionado em suas partes para consultar a tabela original
-org, doc_type, doc_number = selected_contract.split('-')
+org, doc_type, doc_number = selected_contract.split("-")
 
 # Buscar os dados completos da tabela etp_admprocess para o contrato selecionado
 query = f"""
     SELECT *
     FROM etp_admprocess
-    WHERE organization = '{org}' 
-      AND document_type = '{doc_type}' 
+    WHERE organization = '{org}'
+      AND document_type = '{doc_type}'
       AND document_number = '{doc_number}';
 """
 df_detailed = load_data(query)
@@ -333,11 +359,17 @@ tr_json = df_tr.to_json(orient="records", indent=2)
 if selected_contract:
 
     # Carregar dados detalhados do contrato selecionado
-    df_detailed = load_data(f"SELECT * FROM etp_admprocess WHERE organization || '-' || document_type || '-' || document_number = '{selected_contract}'")
+    df_detailed = load_data(
+        f"SELECT * FROM etp_admprocess WHERE organization || '-' || document_type || '-' || document_number = '{selected_contract}'"
+    )
 
     # Carregar e converter dados da tabela `etp_etp` e `tr_tr` para JSON
-    etp_json = load_data(f"SELECT justification, requesting_area, created_at, updated_at, status FROM etp_etp WHERE id = {df_detailed['id'].values[0]}").to_json(orient="records")
-    tr_json = load_data(f"SELECT objective, justification, description, service_location, scheduled_date, created_at, updated_at, status FROM tr_tr WHERE id = {df_detailed['id'].values[0]}").to_json(orient="records")
+    etp_json = load_data(
+        f"SELECT justification, requesting_area, created_at, updated_at, status FROM etp_etp WHERE id = {df_detailed['id'].values[0]}"
+    ).to_json(orient="records")
+    tr_json = load_data(
+        f"SELECT objective, justification, description, service_location, scheduled_date, created_at, updated_at, status FROM tr_tr WHERE id = {df_detailed['id'].values[0]}"
+    ).to_json(orient="records")
 
     # Botão para enviar o contrato selecionado como prompt para a LLM
     if st.button("Enviar para LLM"):
@@ -353,10 +385,14 @@ if selected_contract:
             # Indicar que a LLM está processando a requisição
             with st.spinner("Aguardando resposta da LLM..."):
                 # Fazer a requisição GET para a LLM com o prompt como parâmetro
-                response = requests.get("http://localhost:8001/ask", params={"prompt": prompt})
+                response = requests.get(
+                    "http://localhost:8001/ask", params={"prompt": prompt}
+                )
 
             # Fazer a requisição GET para a LLM com o prompt como parâmetro
-            response = requests.get("http://localhost:8001/ask", params={"prompt": prompt})
+            response = requests.get(
+                "http://localhost:8001/ask", params={"prompt": prompt}
+            )
 
             # Verificar e exibir a resposta
             if response.status_code == 200:
