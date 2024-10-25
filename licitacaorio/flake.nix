@@ -21,7 +21,6 @@
         devShells.default = with pkgs;
           mkShell {
             packages = [
-              graphviz
               python312
               uv
             ];
