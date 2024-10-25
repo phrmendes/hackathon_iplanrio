@@ -7,8 +7,8 @@ import requests
 import streamlit as st
 
 st.set_page_config(
-    page_title="LICITACAO.RIO",
-    page_icon="📄",
+    page_title="Licitação.Rio - Dashboard",
+    page_icon="./assets/favicon.ico",  # Caminho relativo para o favicon
     layout="wide",
 )
 
