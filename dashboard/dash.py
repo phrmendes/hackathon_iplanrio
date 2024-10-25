@@ -54,7 +54,7 @@ with col2:
     st.markdown(
         '<div class="kpi-box">'
         "<h3> Total de Termos de Referência </h3>"
-        f'<h1 style="font-size: 48px; margin: 0;">{10}</h1>'
+        f'<h1 style="font-size: 48px; margin: 0;">{9}</h1>'
         "</div>",
         unsafe_allow_html=True,
     )
@@ -207,13 +207,13 @@ st.markdown("---")
 
 # Layout das caixas para ETRs
 st.markdown("#### Termos de Referência com Atraso")
-col4, col5, col6 = st.columns(3)
+col5, col6, col7 = st.columns(3)
 
-with col4:
-    custom_metric("Mais de 1 Mês", etr_1_month_delay, "#FFFACD")  # Amarelo claro
 with col5:
-    custom_metric("Mais de 3 Meses", etr_3_months_delay, "#FFDAB9")  # Laranja claro
+    custom_metric("Mais de 1 Mês", etr_1_month_delay, "#FFFACD")  # Amarelo claro
 with col6:
+    custom_metric("Mais de 3 Meses", etr_3_months_delay, "#FFDAB9")  # Laranja claro
+with col7:
     custom_metric("Mais de 6 Meses", etr_6_months_delay, "#F08080")  # Vermelho claro
 
 st.markdown("#")
@@ -249,10 +249,14 @@ st.markdown(
 st.markdown("---")
 
 # Filtered table by status and period
-st.subheader("📅 Filtro por Status e Período")
+st.subheader("📅 Filtro por Status e Período por Setor Demandante")
 
 status_options = ["Concluído", "Em andamento", "Cancelado"]
 selected_status = st.selectbox("Selecione o Status:", status_options)
+
+# List of orgoas
+setores = ["SMS", "PRO", "MEM"]
+selected_orgao = st.selectbox("Selecione o Setor Demandante:", setores)
 
 # Inputs of data
 start_data = st.date_input("Data Inicial", value=pd.to_datetime("2024-01-01").date())
@@ -263,10 +267,12 @@ start_data = pd.to_datetime(start_data)
 end_data = pd.to_datetime(end_data)
 df_adm_process["year"] = pd.to_datetime(df_adm_process["year"], format="%Y")
 
+
 df_filtered = df_adm_process[
     (df_adm_process["document_type"] == selected_status)
     & (df_adm_process["year"] >= start_data)
     & (df_adm_process["year"] <= end_data)
+    & (df_adm_process["organization"] == "organization")
 ]
 
 df_filtered = df_filtered.rename(
@@ -276,13 +282,14 @@ df_filtered = df_filtered.rename(
         "document_number": "Número do Documento",
         "document_type": "Tipo de Documento",
         "user_id": "ID do Usuário",
-        "organization": "Organização",
+        "organization": "Órgão",
         "year": "Ano",
     }
 )
 
 st.subheader("📋 ETPS Filtradas")
 st.dataframe(df_filtered)
+
 
 st.markdown(
     '<div class="footer">🚀 Desenvolvido por DADOS IPLAN</div>', unsafe_allow_html=True
