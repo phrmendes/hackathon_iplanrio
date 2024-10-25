@@ -3,3 +3,11 @@ base = "light"
 
 [ui]
 hideTopBar = true
+
+[server]
+enableCORS = false
+enableXsrfProtection = false
+
+[browser]
+gatherUsageStats = false
+

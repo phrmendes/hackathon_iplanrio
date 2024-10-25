@@ -393,7 +393,7 @@ if selected_contract:
             with st.spinner("Aguardando resposta da LLM..."):
                 # Fazer a requisição GET para a LLM com o prompt como parâmetro
                 response = requests.get(
-                    "http://localhost:8001/ask", params={"prompt": prompt}
+                    "http://ollama-api:8000/ask", params={"prompt": prompt}
                 )
 
             # Verificar e exibir a resposta

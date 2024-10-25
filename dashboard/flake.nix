@@ -22,11 +22,15 @@
           mkShell {
             packages = [
               python312
-              poetry
+              uv
             ];
 
             shellHook = ''
               VENV="./.venv/bin/activate"
+
+              if [[ ! -f $VENV ]]; then
+                ${pkgs.uv}/bin/uv sync
+              fi
 
               source "$VENV"
             '';
