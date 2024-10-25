@@ -34,7 +34,7 @@ df_contract = load_data("SELECT * FROM etp_contractestimate")
 df_installment = load_data("SELECT * FROM etp_installment")
 
 # KPIs styled
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 # KPI 1: ETP total
 with col1:
@@ -76,14 +76,26 @@ formatted_value = (
     .replace(".", ",")
     .replace("X", ".")
 )
-# #KPI 3: Licitations concluded
+# #KPI 3: ETPS concluded
+etps_concluded = 3
 # TODO: Como identificar ETPS concluídas?
 # licitations_concluded = df_adm_process[sf_adm_process["document_type"] == "Concluído"].shape[0]
 with col3:
     st.markdown(
         '<div class="kpi-box">'
-        "<h3> Valor Total Estimado (R$) </h3>"
-        f'<h1 style="font-size: 48px; margin: 0;">{formatted_value}</h1>'
+        "<h3> Estudos Técnicos Concluídos </h3>"
+        f'<h1 style="font-size: 48px; margin: 0;">{etps_concluded}</h1>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+# KPI4: tERMS concluded
+trs_concluded = 2
+with col4:
+    st.markdown(
+        '<div class="kpi-box">'
+        "<h3> Termos de Referência Concluídos </h3>"
+        f'<h1 style="font-size: 48px; margin: 0;">{trs_concluded}</h1>'
         "</div>",
         unsafe_allow_html=True,
     )
@@ -91,23 +103,31 @@ with col3:
 # Exemplo de dados fictícios para cada categoria
 data = {
     "Organização": ["SMS", "PRO", "MEM"],
-    "Número de Licitações": [50, 75, 30]  # Valores diferentes para cada categoria
+    "Número de Licitações": [50, 75, 30],  # Valores diferentes para cada categoria
 }
 
 # Criar um DataFrame a partir dos dados
 df_org = pd.DataFrame(data)
 
 # Definir a nova paleta de cores clara
-custom_colors = ["#ADD8E6", "#ade6d8", "#adbce6"]  # Azul claro, amarelo dourado, rosa choque
+custom_colors = [
+    "#ADD8E6",
+    "#ade6d8",
+    "#adbce6",
+]  # Azul claro, amarelo dourado, rosa choque
+
 
 # Gerar o gráfico de barras com a nova paleta de cores clara
+# Rename Organization to Orgão
+df_org = df_org.rename(columns={"Organização": "Órgão"})
+
 fig1 = px.bar(
     df_org,
-    x="Organização",
+    x="Órgão",
     y="Número de Licitações",
-    title="Distribuição de Licitações por Organização",
-    color="Organização",  # Use a coluna para colorir
-    color_discrete_sequence=custom_colors  # Aplicar a nova paleta de cores claras
+    title="Distribuição de Licitações por Orgão",
+    color="Órgão",  # Use a coluna para colorir
+    color_discrete_sequence=custom_colors,  # Aplicar a nova paleta de cores claras
 )
 st.plotly_chart(fig1, use_container_width=True)
 
@@ -123,7 +143,8 @@ def custom_metric(label, value, color):
             <p style="font-size:24px; font-weight: bold;">{label}</p>
             <p style="font-size:48px; margin: -10px 0; font-weight: bold;">{value}</p>
         </div>
-        """, unsafe_allow_html=True
+        """,
+        unsafe_allow_html=True,
     )
 
 
@@ -151,7 +172,7 @@ with col2:
 with col3:
     custom_metric("Mais de 6 Meses", etp_6_months_delay, "#F08080")  # Vermelho claro
 
-st.markdown('#')
+st.markdown("#")
 
 
 # Lista dos ETPs mais atrasados com seus tempos em dias
@@ -195,7 +216,7 @@ with col5:
 with col6:
     custom_metric("Mais de 6 Meses", etr_6_months_delay, "#F08080")  # Vermelho claro
 
-st.markdown('#')
+st.markdown("#")
 
 
 # Lista dos ETPs mais atrasados com seus tempos em dias
