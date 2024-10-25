@@ -1,14 +1,18 @@
-[project]
+[tool.poetry]
 name = "dashboard"
 version = "0.1.0"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-  "matplotlib>=3.9.2",
-  "pandas>=2.2.3",
-  "plotly>=5.24.1",
-  "psycopg>=3.2.3",
-  "requests>=2.32.3",
-  "sqlalchemy>=2.0.36",
-  "streamlit>=1.39.0",
-]
+description = ""
+authors = ["Pedro Mendes <pedrohrmendes@proton.me>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+matplotlib = "^3.9.2"
+pandas = "^2.2.3"
+plotly = "^5.24.1"
+requests = "^2.32.3"
+streamlit = "^1.39.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
