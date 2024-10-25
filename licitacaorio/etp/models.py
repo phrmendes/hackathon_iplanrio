@@ -3,6 +3,7 @@ from django.db import models
 from djmoney.models.fields import MoneyField
 
 from licitacaorio.settings import DEFAULT_CURRENCY
+from licitacaorio.utils import StatusChoices
 
 
 class AdmProcess(models.Model):
@@ -25,10 +26,23 @@ class ETP(models.Model):
     adm_process = models.OneToOneField(AdmProcess, on_delete=models.CASCADE, related_name="etp")
     justification = models.TextField()
     requesting_area = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    concluded_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    previous_status = models.CharField(
+        max_length=9,
+        choices=StatusChoices.choices(),
+        default=StatusChoices.PENDING.value,
+    )
+    status = models.CharField(
+        max_length=9,
+        choices=StatusChoices.choices(),
+        default=StatusChoices.PENDING.value,
+    )
 
     def __str__(self) -> str:
         """Unicode representation of ETP."""
-        return f"ETP(id={self.id}, adm_process={self.adm_process})"
+        return f"ETP(id={self.id}, adm_process={self.adm_process}, status={self.status})"
 
 
 class MarketResearch(models.Model):

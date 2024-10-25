@@ -2,8 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_GET, require_http_methods
+from django.utils.timezone import now
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
+from licitacaorio.utils import StatusChoices
 from tr import forms, models
 
 
@@ -27,24 +29,43 @@ def tr_index(request: HttpRequest) -> HttpResponse:
 @login_required
 @require_GET
 def tr_list(request: HttpRequest) -> HttpResponse:
-    tr_list = models.TR.objects.all().order_by("-id")
+    tr_list = models.TR.objects.filter(adm_process__user=request.user).order_by("-id")
     paginator = Paginator(tr_list, 5)
     page = request.GET.get("page", 1)
     trs = paginator.get_page(page)
 
-    return render(request, "tr/list.html", {"trs": trs})
+    return render(request, "tr/partials/list.html", {"trs": trs})
+
+
+@login_required
+@require_POST
+def tr_change_status(request: HttpRequest, tr_id: int) -> HttpResponse:
+    tr = get_object_or_404(models.TR, pk=tr_id)
+
+    if tr.status == "Pendente":
+        status = StatusChoices.FINISHED.value
+        previous_status = StatusChoices.PENDING.value
+        concluded_at = now()
+    else:
+        status = StatusChoices.PENDING.value
+        previous_status = StatusChoices.FINISHED.value
+        concluded_at = None
+
+    tr.status = status
+    tr.concluded_at = concluded_at
+    tr.previous_status = previous_status
+    tr.save()
+
+    return render(request, "tr/partials/list_item.html", {"tr": tr})
 
 
 @login_required
 @require_http_methods(["DELETE"])
 def tr_delete(request: HttpRequest, tr_id: int) -> HttpResponse:
-    try:
-        tr = get_object_or_404(models.TR, pk=tr_id)
-        tr.delete()
+    tr = get_object_or_404(models.TR, pk=tr_id)
+    tr.delete()
 
-        return render(request, "empty.html")
-    except models.TR.DoesNotExist:
-        return HttpResponse(status=404)
+    return render(request, "empty.html")
 
 
 @login_required

@@ -12,4 +12,4 @@ RUN uv sync --no-dev
 
 EXPOSE 8001
 
-CMD ["uv", "run", "--no-dev", "uvicorn", "app:app", "--server.port", "8001", "--server.address", "0.0.0.0"]
+CMD ["uv", "run", "--no-dev", "streamlit", "run", "dash.py", "--server.address", "0.0.0.0", "--server.port", "8000"]

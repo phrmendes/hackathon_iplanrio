@@ -10,27 +10,39 @@
         </thead>
         <tbody>
             {% for adm_process in adm_processes %}
-                <tr>
+                <tr id="etp-{{ adm_process.id }}">
                     <td>
                         {{ adm_process.organization }}{{ adm_process.document_type }}{{ adm_process.year }}/{{ adm_process.document_number }}
                     </td>
                     <td>{{ adm_process.etp.justification }}</td>
                     <td>{{ adm_process.etp.requesting_area }}</td>
                     <td>
-                        <button class="action-button button-remove"
-                                hx-delete="{% url 'etp:delete' adm_process.id %}"
-                                hx-target="closest tr"
-                                hx-confirm="Tem certeza que deseja excluir este estudo técnico?">Excluir</button>
+                        <button class="action-button button-status"
+                                hx-post="{% url 'etp:etp_change_status' adm_process.id %}"
+                                hx-target="#etp-{{ adm_process.id }}"
+                                hx-swap="innerHTML">
+                            {% if adm_process.etp.status == "Pendente" %}
+                                Concluir
+                            {% else %}
+                                Pendente
+                            {% endif %}
+                        </button>
                     </td>
                     <td>
                         <a href="{% url 'etp:etp_index' adm_process.id %}">
                             <button class="action-button button-edit" type="button">Editar</button>
                         </a>
                     </td>
+                    <td>
+                        <button class="action-button button-remove"
+                                hx-delete="{% url 'etp:delete' adm_process.id %}"
+                                hx-target="closest tr"
+                                hx-confirm="Tem certeza que deseja excluir este estudo técnico?">Excluir</button>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="3">Nenhum estudo técnico encontrado.</td>
+                    <td colspan="6">Nenhum estudo técnico encontrado.</td>
                 </tr>
             {% endfor %}
         </tbody>
